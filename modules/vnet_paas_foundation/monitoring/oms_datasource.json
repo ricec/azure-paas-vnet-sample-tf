@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "omsWorkspaceName": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "id": "[concat(resourceGroup().id, '/providers/Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName'), '/datasources/', subscription().subscriptionId)]",
+      "type": "Microsoft.OperationalInsights/workspaces/datasources",
+      "kind": "AzureActivityLog",
+      "name": "[concat(parameters('omsWorkspaceName'), '/', subscription().subscriptionId)]",
+      "apiVersion": "2015-11-01-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "linkedResourceId": "[concat(subscription().Id, '/providers/microsoft.insights/eventTypes/management')]"
+      }
+    }
+  ]
+}
