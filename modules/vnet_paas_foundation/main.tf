@@ -1,10 +1,15 @@
-provider "azurerm" { }
+provider "azurerm" {}
+data "azurerm_client_config" "current" {}
+
+resource "azurerm_resource_group" "ops" {
+  name     = "${var.ops_rg_name}"
+  location = "${var.location}"
+}
 
 module "monitoring" {
   source = "./monitoring"
-  location = "${var.location}"
   resource_prefix = "${var.resource_prefix}"
-  resource_group_name = "${var.monitoring_rg_name}"
+  resource_group_name = "${azurerm_resource_group.ops.name}"
   oms_retention = "${var.oms_retention}"
   tags = "${merge(var.base_tags, var.monitoring_tags)}"
 }
