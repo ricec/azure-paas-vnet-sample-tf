@@ -1,0 +1,48 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "aseName": {
+      "type": "string"
+    },
+    "vnetId": {
+      "type": "string"
+    },
+    "subnetName": {
+      "type": "string"
+    },
+    "dnsSuffix": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The friendly name of the ASE's region (e.g. South Central US). This is needed because `location` on the ASE doesn't accept non-friendly names (e.g. southcentralus)"
+      }
+    },
+    "tags": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('aseName')]",
+      "type": "Microsoft.Web/hostingEnvironments",
+      "kind": "ASEV2",
+      "apiVersion": "2015-02-01",
+      "location": "[parameters('location')]",
+      "tags":  "[json(parameters('tags'))]",
+      "properties": {
+        "name": "[parameters('aseName')]",
+        "location": "[parameters('location')]",
+        "ipSslAddressCount": 0,
+        "internalLoadBalancingMode": 3,
+        "dnsSuffix": "[parameters('dnsSuffix')]",
+        "virtualNetwork": {
+          "id": "[parameters('vnetId')]",
+          "subnet": "[parameters('subnetName')]"
+        }
+      }
+    }
+  ]
+}

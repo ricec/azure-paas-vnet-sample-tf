@@ -19,6 +19,14 @@ variable "key_vault_diagnostics_retention" {
 }
 variable "key_vault_deployer_object_id" {}
 
+# Shared App Infrastructure
+
+variable "shared_app_rg_name" {}
+variable "shared_app_tags" {
+  default = {
+    Tier = "App"
+  }
+}
 
 # Monitoring
 

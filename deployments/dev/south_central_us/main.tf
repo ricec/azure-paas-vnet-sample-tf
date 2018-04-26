@@ -12,6 +12,7 @@ module "foundation" {
     CostCenter = "11111"
   }
 
+  shared_app_rg_name = "prefix-dev-app-shared"
   ops_rg_name        = "prefix-dev-ops"
   networking_rg_name = "prefix-dev-networking"
 

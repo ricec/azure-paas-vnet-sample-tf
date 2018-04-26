@@ -1,6 +1,11 @@
 provider "azurerm" {}
 data "azurerm_client_config" "current" {}
 
+resource "azurerm_resource_group" "shared_app" {
+  name     = "${var.shared_app_rg_name}"
+  location = "${var.location}"
+}
+
 resource "azurerm_resource_group" "ops" {
   name     = "${var.ops_rg_name}"
   location = "${var.location}"
