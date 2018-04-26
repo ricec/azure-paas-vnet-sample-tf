@@ -12,4 +12,5 @@ module "foundation" {
   }
 
   monitoring_rg_name = "prefix-dev-ops"
+  networking_rg_name = "prefix-dev-networking"
 }
