@@ -25,7 +25,7 @@ resource "azurerm_key_vault" "main" {
 
   # Configure diagnostic settings
   provisioner "local-exec" {
-    command = "${data.template_file.create_key_vault_diagnostic_settings.rendered}"
+    command = "${module.monitoring.diagnostic_commands["key_vault"]}"
 
     environment {
       resource_id = "${azurerm_key_vault.main.id}"
@@ -54,33 +54,6 @@ resource "azurerm_key_vault" "main" {
       common_name = "*.${local.ase_base_hostname}"
       alt_name    = "*.scm.${local.ase_base_hostname}"
     }
-  }
-}
-
-data "template_file" "key_vault_diagnostic_logs_settings" {
-  template = "${file("${path.module}/diagnostics/key_vault_logs.json.tpl")}"
-
-  vars {
-    retention = "${var.key_vault_diagnostics_retention}"
-  }
-}
-
-data "template_file" "key_vault_diagnostic_metrics_settings" {
-  template = "${file("${path.module}/diagnostics/key_vault_metrics.json.tpl")}"
-
-  vars {
-    retention = "${var.key_vault_diagnostics_retention}"
-  }
-}
-
-data "template_file" "create_key_vault_diagnostic_settings" {
-  template = "${file("${path.module}/diagnostics/create_diagnostic_settings.sh.tpl")}"
-
-  vars {
-    logs_json          = "${data.template_file.key_vault_diagnostic_logs_settings.rendered}"
-    metrics_json       = "${data.template_file.key_vault_diagnostic_metrics_settings.rendered}"
-    storage_account_id = "${module.monitoring.diagnostics_storage_account_id}"
-    oms_workspace_id   = "${module.monitoring.oms_workspace_id}"
   }
 }
 

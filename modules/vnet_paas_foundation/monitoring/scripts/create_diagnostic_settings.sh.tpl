@@ -19,4 +19,5 @@ if [ -n "$metrics" ]; then
   --metrics '$metrics'"
 fi
 
+echo "$cmd"
 eval "$cmd"
