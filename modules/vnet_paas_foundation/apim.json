@@ -1,0 +1,95 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "apimName": {
+      "type": "string"
+    },
+    "publisherEmail": {
+      "type": "string"
+    },
+    "publisherName": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "skuCount": {
+      "type": "string"
+    },
+    "proxyHostname": {
+      "type": "string"
+    },
+    "portalHostname": {
+      "type": "string"
+    },
+    "scmHostname": {
+      "type": "string"
+    },
+    "sslCert": {
+      "type": "securestring"
+    },
+    "vnetId": {
+      "type": "string"
+    },
+    "subnetName": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "subnetId": "[concat(parameters('vnetId'),'/subnets/',parameters('subnetName'))]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('apimName')]",
+      "type": "Microsoft.ApiManagement/service",
+      "apiVersion": "2017-03-01",
+      "location": "[resourceGroup().location]",
+      "tags": "[json(parameters('tags'))]",
+      "sku": {
+        "name": "[parameters('sku')]",
+        "capacity": "[int(parameters('skuCount'))]"
+      },
+      "properties": {
+        "publisherEmail": "[parameters('publisherEmail')]",
+        "publisherName": "[parameters('publisherName')]",
+        "hostnameConfigurations": [
+          {
+            "type": "Proxy",
+            "hostName": "[parameters('proxyHostname')]",
+            "encodedCertificate": "[parameters('sslCert')]"
+          },
+          {
+            "type": "Portal",
+            "hostName": "[parameters('portalHostname')]",
+            "encodedCertificate": "[parameters('sslCert')]"
+          },
+          {
+            "type": "SCM",
+            "hostName": "[parameters('scmHostname')]",
+            "encodedCertificate": "[parameters('sslCert')]"
+          }
+        ],
+        "virtualNetworkType": "Internal",
+        "virtualNetworkConfiguration": {
+          "subnetResourceId": "[variables('subnetId')]",
+          "location": "[resourceGroup().location]"
+        },
+        "customProperties": {
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": false,
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": false,
+          "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls10": false
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "apimId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+    }
+  }
+}

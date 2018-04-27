@@ -1,3 +1,8 @@
+locals {
+  apim_cert_name = "${replace(local.apim_base_hostname, ".", "-")}"
+  ase_cert_name = "${replace(local.ase_base_hostname, ".", "-")}"
+}
+
 resource "azurerm_key_vault" "main" {
   name                = "${var.resource_prefix}-vault"
   location            = "${azurerm_resource_group.ops.location}"
@@ -32,7 +37,7 @@ resource "azurerm_key_vault" "main" {
     command = "${path.module}/scripts/generate_cert.sh"
 
     environment {
-      cert_name   = "${replace(local.apim_base_hostname, ".", "-")}"
+      cert_name   = "${local.apim_cert_name}"
       vault_name  = "${azurerm_key_vault.main.name}"
       common_name = "${local.apim_base_hostname}"
       alt_name    = "*.${local.apim_base_hostname}"
@@ -44,7 +49,7 @@ resource "azurerm_key_vault" "main" {
     command = "${path.module}/scripts/generate_cert.sh"
 
     environment {
-      cert_name   = "${replace(local.ase_base_hostname, ".", "-")}"
+      cert_name   = "${local.ase_cert_name}"
       vault_name  = "${azurerm_key_vault.main.name}"
       common_name = "*.${local.ase_base_hostname}"
       alt_name    = "*.scm.${local.ase_base_hostname}"
@@ -79,4 +84,10 @@ data "template_file" "create_key_vault_diagnostic_settings" {
   }
 }
 
-
+data "external" "apim_ssl_cert" {
+  program = [
+    "${path.module}/scripts/get_key_vault_certificate.sh",
+    "${local.apim_cert_name}",
+    "${azurerm_key_vault.main.name}"
+  ]
+}

@@ -27,6 +27,13 @@ variable "shared_app_tags" {
     Tier = "App"
   }
 }
+variable "apim_publisher_email" {}
+variable "apim_publisher_name" {}
+variable "apim_sku" {}
+variable "apim_sku_count" {}
+variable "apim_diagnostics_retention" {
+  default = 365
+}
 
 # Monitoring
 
