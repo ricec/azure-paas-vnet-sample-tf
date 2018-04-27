@@ -17,7 +17,7 @@ resource "azurerm_template_deployment" "apim" {
     proxyHostname  = "${local.apim_base_hostname}"
     portalHostname = "docs.${local.apim_base_hostname}"
     scmHostname    = "scm.${local.apim_base_hostname}"
-    sslCert        = "${data.external.apim_ssl_cert.result["private_pfx"]}"
+    sslCert        = "${module.secrets.apim_cert["private_pfx"]}"
     vnetId         = "${module.networking.vnet_id}"
     subnetName     = "${module.networking.apim_subnet_name}"
     tags           = "${jsonencode(merge(var.base_tags, var.shared_app_tags))}"
