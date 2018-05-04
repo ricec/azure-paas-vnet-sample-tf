@@ -1,5 +1,6 @@
 locals {
   apim_base_hostname = "api.${var.base_hostname}"
+  apim_portal_hostname = "docs.${local.apim_base_hostname}"
 }
 
 resource "azurerm_template_deployment" "apim" {
@@ -15,7 +16,7 @@ resource "azurerm_template_deployment" "apim" {
     sku            = "${var.apim_sku}"
     skuCount       = "${var.apim_sku_count}"
     proxyHostname  = "${local.apim_base_hostname}"
-    portalHostname = "docs.${local.apim_base_hostname}"
+    portalHostname = "${local.apim_portal_hostname}"
     scmHostname    = "scm.${local.apim_base_hostname}"
     sslCert        = "${module.secrets.apim_cert["private_pfx"]}"
     vnetId         = "${module.networking.vnet_id}"

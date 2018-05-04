@@ -6,16 +6,13 @@ variable "base_tags" {
 }
 
 variable "ops_rg_name" {}
-variable "secrets_tags" {
+variable "ops_tags" {
   default = {
     Tier = "Ops"
   }
 }
 variable "key_vault_sku" {
   default = "standard"
-}
-variable "key_vault_diagnostics_retention" {
-  default = "365"
 }
 variable "key_vault_deployer_object_id" {}
 
@@ -31,17 +28,8 @@ variable "apim_publisher_email" {}
 variable "apim_publisher_name" {}
 variable "apim_sku" {}
 variable "apim_sku_count" {}
-variable "apim_diagnostics_retention" {
-  default = 365
-}
 
 # Monitoring
-
-variable "monitoring_tags" {
-  default = {
-    Tier = "Ops"
-  }
-}
 
 variable "oms_retention" {
   default = 30
@@ -61,14 +49,13 @@ variable "dns_servers" {
   default = []
 }
 
-variable "nsg_diagnostics_retention" {
-  default = 365
+
+# Ingress
+
+variable "waf_sku" {
+  default = "WAF_Medium"
 }
 
-variable "waf_diagnostics_retention" {
-  default = 365
-}
-
-variable "dev_gateway_diagnostics_retention" {
-  default = 365
+variable "waf_capacity" {
+  default = 1
 }

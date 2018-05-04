@@ -40,6 +40,7 @@
     }
   },
   "variables": {
+    "apimId": "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]",
     "subnetId": "[concat(parameters('vnetId'),'/subnets/',parameters('subnetName'))]"
   },
   "resources": [
@@ -89,7 +90,11 @@
   "outputs": {
     "apimId": {
       "type": "string",
-      "value": "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
+      "value": "[variables('apimId')]"
+    },
+    "ipAddress": {
+      "type": "string",
+      "value": "[reference(variables('apimId'), '2018-01-01').privateIPAddresses[0]]"
     }
   }
 }

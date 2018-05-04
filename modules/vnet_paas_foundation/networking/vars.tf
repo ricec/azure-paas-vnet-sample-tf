@@ -1,4 +1,3 @@
-variable "location" {}
 variable "resource_prefix" {}
 variable "resource_group_name" {}
 variable "dns_servers" {
