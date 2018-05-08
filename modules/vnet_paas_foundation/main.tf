@@ -30,10 +30,11 @@ module "monitoring" {
   tags                = "${local.ops_tags}"
 
   diagnostic_profiles = {
-    apim      = 365
-    key_vault = 365
-    nsg       = 365
-    waf       = 365
+    apim        = 365
+    key_vault   = 365
+    nsg         = 365
+    waf         = 365
+    dev_gateway = 365
   }
 }
 

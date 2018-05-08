@@ -59,3 +59,16 @@ variable "waf_sku" {
 variable "waf_capacity" {
   default = 1
 }
+
+variable "dev_gateway_sku" {
+  default = "Standard_Small"
+}
+
+variable "dev_gateway_capacity" {
+  default = 1
+}
+
+
+variable "service_1_name" {
+  default = "service_1"
+}

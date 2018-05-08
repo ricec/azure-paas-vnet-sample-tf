@@ -1,0 +1,325 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "gatewayName": {
+      "type": "string"
+    },
+    "skuName": {
+      "type": "string"
+    },
+    "capacity": {
+      "type": "string"
+    },
+    "apimSslCert": {
+      "type": "securestring"
+    },
+    "apimSslPublicKey": {
+      "type": "string"
+    },
+    "apimId": {
+      "type": "string"
+    },
+    "apimProbeHostname": {
+      "type": "string"
+    },
+    "apimScmHostname": {
+      "type": "string"
+    },
+    "apimPortalHostname": {
+      "type": "string"
+    },
+    "aseSslCert": {
+      "type": "securestring"
+    },
+    "aseSslPublicKey": {
+      "type": "string"
+    },
+    "aseIpAddress": {
+      "type": "string"
+    },
+    "service1ScmHostname": {
+      "type": "string"
+    },
+    "vnetId": {
+      "type": "string"
+    },
+    "subnetName": {
+      "type": "string"
+    },
+    "publicIpId": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "subnetId": "[concat(parameters('vnetId'),'/subnets/',parameters('subnetName'))]",
+    "gatewayId": "[resourceId('Microsoft.Network/applicationGateways',parameters('gatewayName'))]"
+  },
+  "resources": [
+    {
+      "name": "[parameters('gatewayName')]",
+      "type": "Microsoft.Network/applicationGateways",
+      "apiVersion": "2017-06-01",
+      "location": "[resourceGroup().location]",
+      "tags": "[json(parameters('tags'))]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('skuName')]",
+          "tier": "Standard",
+          "capacity": "[int(parameters('capacity'))]"
+        },
+        "gatewayIPConfigurations": [
+          {
+            "name": "appGatewayIpConfig",
+            "properties": {
+              "subnet": {
+                "id": "[variables('subnetId')]"
+              }
+            }
+          }
+        ],
+        "frontendIPConfigurations": [
+          {
+            "name": "frontendIp",
+            "properties": {
+              "PublicIPAddress": {
+                "id": "[parameters('publicIpId')]"
+              }
+            }
+          }
+        ],
+        "frontendPorts": [
+          {
+            "name": "httpsFrontendPort",
+            "properties": {
+              "Port": 443
+            }
+          }
+        ],
+        "sslCertificates": [
+          {
+            "name": "apiCert",
+            "properties": {
+              "data": "[parameters('apimSslCert')]"
+            }
+          },
+          {
+            "name": "aseCert",
+            "properties": {
+              "data": "[parameters('aseSslCert')]"
+            }
+          }
+        ],
+        "authenticationCertificates": [
+          {
+            "name": "apiAuthCert",
+            "properties": {
+              "data": "[parameters('apimSslPublicKey')]"
+            }
+          },
+          {
+            "name": "aseAuthCert",
+            "properties": {
+              "data": "[parameters('aseSslPublicKey')]"
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "apimBackendPool",
+            "properties": {
+              "BackendAddresses": [
+                {
+                  "IpAddress": "[reference(parameters('apimId'), '2018-01-01').privateIPAddresses[0]]"
+                }
+              ]
+            }
+          },
+          {
+            "name": "aseBackendPool",
+            "properties": {
+              "BackendAddresses": [
+                {
+                  "IpAddress": "[parameters('aseIpAddress')]"
+                }
+              ]
+            }
+          }
+        ],
+        "backendHttpSettingsCollection": [
+          {
+            "name": "apimBackendSettings",
+            "properties": {
+              "Port": 443,
+              "Protocol": "Https",
+              "CookieBasedAffinity": "Disabled",
+              "probe": {
+                "id": "[concat(variables('gatewayId'), '/probes/apimHttpsProbe')]"
+              },
+              "authenticationCertificates": [
+                {
+                  "id": "[concat(variables('gatewayId'),'/authenticationCertificates/apiAuthCert')]"
+                }
+              ]
+            }
+          },
+          {
+            "name": "aseBackendSettings",
+            "properties": {
+              "Port": 443,
+              "Protocol": "Https",
+              "CookieBasedAffinity": "Disabled",
+              "probe": {
+                "id": "[concat(variables('gatewayId'), '/probes/aseHttpsProbe')]"
+              },
+              "authenticationCertificates": [
+                {
+                  "id": "[concat(variables('gatewayId'),'/authenticationCertificates/aseAuthCert')]"
+                }
+              ]
+            }
+          }
+        ],
+        "httpListeners": [
+          {
+            "name": "apimScmListener",
+            "properties": {
+              "Hostname": "[parameters('apimScmHostname')]",
+              "FrontendIPConfiguration": {
+                "Id": "[concat(variables('gatewayId'), '/frontendIPConfigurations/frontendIp')]"
+              },
+              "FrontendPort": {
+                "Id": "[concat(variables('gatewayId'), '/frontendPorts/httpsFrontendPort')]"
+              },
+              "Protocol": "Https",
+              "SslCertificate": {
+                "Id": "[concat(variables('gatewayId'), '/sslCertificates/apiCert')]"
+              }
+            }
+          },
+          {
+            "name": "apimPortalListener",
+            "properties": {
+              "Hostname": "[parameters('apimPortalHostname')]",
+              "FrontendIPConfiguration": {
+                "Id": "[concat(variables('gatewayId'), '/frontendIPConfigurations/frontendIp')]"
+              },
+              "FrontendPort": {
+                "Id": "[concat(variables('gatewayId'), '/frontendPorts/httpsFrontendPort')]"
+              },
+              "Protocol": "Https",
+              "SslCertificate": {
+                "Id": "[concat(variables('gatewayId'), '/sslCertificates/apiCert')]"
+              }
+            }
+          },
+          {
+            "name": "service1ScmListener",
+            "properties": {
+              "Hostname": "[parameters('service1ScmHostname')]",
+              "FrontendIPConfiguration": {
+                "Id": "[concat(variables('gatewayId'), '/frontendIPConfigurations/frontendIp')]"
+              },
+              "FrontendPort": {
+                "Id": "[concat(variables('gatewayId'), '/frontendPorts/httpsFrontendPort')]"
+              },
+              "Protocol": "Https",
+              "SslCertificate": {
+                "Id": "[concat(variables('gatewayId'), '/sslCertificates/aseCert')]"
+              }
+            }
+          }
+        ],
+        "requestRoutingRules": [
+          {
+            "Name": "apimScmRule",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[concat(variables('gatewayId'), '/httpListeners/apimScmListener')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(variables('gatewayId'), '/backendAddressPools/apimBackendPool')]"
+              },
+              "backendHttpSettings": {
+                "id": "[concat(variables('gatewayId'), '/backendHttpSettingsCollection/apimBackendSettings')]"
+              }
+            }
+          },
+          {
+            "Name": "apimPortalRule",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[concat(variables('gatewayId'), '/httpListeners/apimPortalListener')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(variables('gatewayId'), '/backendAddressPools/apimBackendPool')]"
+              },
+              "backendHttpSettings": {
+                "id": "[concat(variables('gatewayId'), '/backendHttpSettingsCollection/apimBackendSettings')]"
+              }
+            }
+          },
+          {
+            "Name": "service1ScmRule",
+            "properties": {
+              "RuleType": "Basic",
+              "httpListener": {
+                "id": "[concat(variables('gatewayId'), '/httpListeners/service1ScmListener')]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(variables('gatewayId'), '/backendAddressPools/aseBackendPool')]"
+              },
+              "backendHttpSettings": {
+                "id": "[concat(variables('gatewayId'), '/backendHttpSettingsCollection/aseBackendSettings')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "apimHttpsProbe",
+            "properties": {
+              "protocol": "Https",
+              "host": "[parameters('apimProbeHostname')]",
+              "path": "/status-0123456789abcdef",
+              "interval": 30,
+              "timeout": 30,
+              "unhealthyThreshold": 8
+            }
+          },
+          {
+            "name": "aseHttpsProbe",
+            "properties": {
+              "protocol": "Https",
+              "host": "fakehost",
+              "path": "/",
+              "interval": 30,
+              "timeout": 30,
+              "unhealthyThreshold": 8,
+              "match": {
+                "statusCodes": ["200-499"]
+              }
+            }
+          }
+        ],
+        "sslPolicy": {
+          "disabledSslProtocols": [
+            "TLSv1_0",
+            "TLSv1_1"
+          ]
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "gatewayId": {
+      "type": "string",
+      "value": "[variables('gatewayId')]"
+    }
+  }
+}
