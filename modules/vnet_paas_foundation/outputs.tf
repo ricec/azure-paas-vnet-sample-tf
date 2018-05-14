@@ -1,3 +1,3 @@
 output "ase_id" {
-  value = "${azurerm_template_deployment.ase.outputs["aseId"]}"
+  value = "${module.ase.ase_id}"
 }

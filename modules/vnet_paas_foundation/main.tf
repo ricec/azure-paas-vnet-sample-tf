@@ -1,8 +1,9 @@
 provider "azurerm" {}
 
 locals {
-  ops_tags        = "${merge(var.base_tags, var.ops_tags)}"
-  networking_tags = "${merge(var.base_tags, var.networking_tags)}"
+  ops_tags          = "${merge(var.base_tags, var.ops_tags)}"
+  networking_tags   = "${merge(var.base_tags, var.networking_tags)}"
+  ase_base_hostname = "ase.${var.base_hostname}"
 }
 
 resource "azurerm_resource_group" "shared_app" {
@@ -67,4 +68,15 @@ module "networking" {
   dns_servers         = "${var.dns_servers}"
   diagnostic_commands = "${module.monitoring.diagnostic_commands}"
   tags                = "${local.networking_tags}"
+}
+
+module "ase" {
+  source                 = "../app_service_environment"
+  resource_group_name    = "${azurerm_resource_group.shared_app.name}"
+  ase_name               = "${var.resource_prefix}-ase"
+  vnet_id                = "${module.networking.vnet_id}"
+  subnet_name            = "${module.networking.ase_subnet_name}"
+  dns_suffix             = "${local.ase_base_hostname}"
+  friendly_location_name = "${var.location}"
+  tags                   = "${merge(var.base_tags, var.shared_app_tags)}"
 }
