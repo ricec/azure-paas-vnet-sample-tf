@@ -1,0 +1,56 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "planName": {
+      "type": "string"
+    },
+    "aseId": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The friendly name of the location (e.g. 'South Central US'). Normalized location names do not work with ASEs"
+      }
+    },
+    "skuName": {
+      "type": "string",
+      "allowedValues": [
+        "I1",
+        "I2",
+        "I3"
+      ]
+    },
+    "tags": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('planName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2016-09-01",
+      "location": "[parameters('location')]",
+      "tags": "[json(parameters('tags'))]",
+      "properties": {
+        "name": "[parameters('planName')]",
+        "hostingEnvironmentProfile": {
+          "id": "[parameters('aseId')]"
+        }
+      },
+      "sku": {
+        "name": "[parameters('skuName')]",
+        "tier": "Isolated",
+        "size": "[parameters('skuName')]",
+        "family": "I"
+      }
+    }
+  ],
+  "outputs": {
+    "planId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Web/serverfarms', parameters('planName'))]"
+    }
+  }
+}

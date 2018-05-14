@@ -1,6 +1,10 @@
-provider "azurerm" { }
+provider "azurerm" {
+  version = "1.4.0"
+}
 
 locals {
+  # NOTE: This location must be the friendly name (e.g. South Central US) as
+  # ASEs don't play nicely with normalized location names.
   location        = "East US"
   resource_prefix = "prefix-dev"
 
@@ -8,6 +12,10 @@ locals {
     OwnerTeam = "TheTeam",
     ProductName = "TheProduct",
     CostCenter = "11111"
+  }
+  service_1_tags = {
+    Tier = "App"
+    Component = "Service1"
   }
 }
 
@@ -28,4 +36,13 @@ module "foundation" {
   apim_publisher_name  = "chrrice"
   apim_sku             = "Developer"
   apim_sku_count       = 1
+}
+
+module "service_1" {
+  source              = "../../../modules/service_1"
+  location            = "${local.location}"
+  resource_prefix     = "${local.resource_prefix}-service-1"
+  resource_group_name = "${local.resource_prefix}-service-1"
+  ase_id              = "${module.foundation.ase_id}"
+  tags                = "${merge(local.base_tags, local.service_1_tags)}"
 }
