@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "main" {
 
 module "app_service_plan" {
   source                     = "../app_service_plan"
-  name                       = "${var.resource_prefix}-asp2"
+  name                       = "${var.resource_prefix}-asp"
   friendly_location_name     = "${var.location}"
   resource_group_name        = "${var.resource_group_name}"
   app_service_environment_id = "${var.ase_id}"

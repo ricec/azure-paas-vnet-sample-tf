@@ -14,3 +14,10 @@ resource "azurerm_template_deployment" "ase" {
 
   deployment_mode = "Incremental"
 }
+
+data "external" "ilb_ip" {
+  program = [
+    "${path.module}/scripts/get_ase_ilb_ip.sh",
+    "${azurerm_template_deployment.ase.outputs["aseId"]}",
+  ]
+}
