@@ -4,12 +4,14 @@ resource "azurerm_template_deployment" "ase" {
   template_body       = "${file("${path.module}/ase.json")}"
 
   parameters {
-    aseName    = "${var.ase_name}"
-    vnetId     = "${var.vnet_id}"
-    subnetName = "${var.subnet_name}"
-    dnsSuffix  = "${var.dns_suffix}"
-    location   = "${var.friendly_location_name}"
-    tags       = "${jsonencode(var.tags)}"
+    aseName        = "${var.ase_name}"
+    vnetId         = "${var.vnet_id}"
+    subnetName     = "${var.subnet_name}"
+    dnsSuffix      = "${var.dns_suffix}"
+    location       = "${var.friendly_location_name}"
+    keyVaultId     = "${var.key_vault_id}"
+    certSecretName = "${var.cert_secret_name}"
+    tags           = "${jsonencode(var.tags)}"
   }
 
   deployment_mode = "Incremental"

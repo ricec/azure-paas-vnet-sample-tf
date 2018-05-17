@@ -25,6 +25,17 @@ resource "azurerm_key_vault" "main" {
     certificate_permissions = ["get", "list", "create"]
   }
 
+  # Grants Microsoft.Azure.WebSites access to read secrets.
+  # This is used to create the ASE's certificate from the Key Vault cert.
+  access_policy {
+    tenant_id = "${data.azurerm_client_config.current.tenant_id}"
+    object_id = "f8daea97-62e7-4026-becf-13c2ea98e8b4"
+
+    key_permissions         = []
+    secret_permissions      = ["get"]
+    certificate_permissions = []
+  }
+
   # Configure diagnostic settings
   provisioner "local-exec" {
     command = "${var.diagnostic_commands["key_vault"]}"

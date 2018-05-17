@@ -20,11 +20,30 @@
         "description": "The friendly name of the ASE's region (e.g. South Central US). This is needed because `location` on the ASE doesn't accept non-friendly names (e.g. southcentralus)"
       }
     },
+    "keyVaultId": {
+      "type": "string"
+    },
+    "certSecretName": {
+      "type": "string"
+    },
     "tags": {
       "type": "string"
     }
   },
+  "variables": {
+    "certName": "[concat(parameters('certSecretName'), '_', parameters('aseName'), '_InternalLoadBalancingASE')]"
+  },
   "resources": [
+    {
+      "apiVersion": "2016-03-01",
+      "type": "Microsoft.Web/certificates",
+      "name": "[variables('certName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "keyVaultId": "[parameters('keyVaultId')]",
+        "keyVaultSecretName": "[parameters('certSecretName')]"
+      }
+    },
     {
       "name": "[parameters('aseName')]",
       "type": "Microsoft.Web/hostingEnvironments",
@@ -32,6 +51,9 @@
       "apiVersion": "2015-02-01",
       "location": "[parameters('location')]",
       "tags":  "[json(parameters('tags'))]",
+      "dependsOn": [
+        "[variables('certName')]"
+      ],
       "properties": {
         "name": "[parameters('aseName')]",
         "location": "[parameters('location')]",
@@ -41,7 +63,13 @@
         "virtualNetwork": {
           "id": "[parameters('vnetId')]",
           "subnet": "[parameters('subnetName')]"
-        }
+        },
+        "clusterSettings": [
+          {
+            "name": "DefaultSslCertificateThumbprint",
+            "value": "[reference(resourceId('Microsoft.Web/certificates', variables('certName'))).Thumbprint]"
+          }
+        ]
       }
     }
   ],

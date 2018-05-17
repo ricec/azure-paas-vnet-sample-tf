@@ -78,5 +78,7 @@ module "ase" {
   subnet_name            = "${module.networking.ase_subnet_name}"
   dns_suffix             = "${local.ase_base_hostname}"
   friendly_location_name = "${var.location}"
+  key_vault_id           = "${module.secrets.key_vault_id}"
+  cert_secret_name       = "${module.secrets.ase_cert_secret_name}"
   tags                   = "${merge(var.base_tags, var.shared_app_tags)}"
 }
