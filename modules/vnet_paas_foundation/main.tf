@@ -65,6 +65,7 @@ module "networking" {
   source              = "./networking"
   resource_prefix     = "${var.resource_prefix}"
   resource_group_name = "${var.networking_rg_name}"
+  dns_zone_name       = "${var.base_hostname}"
   dns_servers         = "${var.dns_servers}"
   diagnostic_commands = "${module.monitoring.diagnostic_commands}"
   tags                = "${local.networking_tags}"
@@ -81,4 +82,20 @@ module "ase" {
   key_vault_id           = "${module.secrets.key_vault_id}"
   cert_secret_name       = "${module.secrets.ase_cert_secret_name}"
   tags                   = "${merge(var.base_tags, var.shared_app_tags)}"
+}
+
+resource "azurerm_dns_a_record" "ase" {
+  name                = "*.ase"
+  zone_name           = "${module.networking.dns_zone_name}"
+  resource_group_name = "${azurerm_resource_group.networking.name}"
+  ttl                 = 300
+  records             = ["${module.ase.ilb_ip}"]
+}
+
+resource "azurerm_dns_a_record" "ase_scm" {
+  name                = "*.scm.ase"
+  zone_name           = "${module.networking.dns_zone_name}"
+  resource_group_name = "${azurerm_resource_group.networking.name}"
+  ttl                 = 300
+  records             = ["${module.ase.ilb_ip}"]
 }

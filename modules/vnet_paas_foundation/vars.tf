@@ -70,5 +70,5 @@ variable "dev_gateway_capacity" {
 
 
 variable "service_1_name" {
-  default = "service_1"
+  default = "prefix-dev-service-1-web-app"
 }

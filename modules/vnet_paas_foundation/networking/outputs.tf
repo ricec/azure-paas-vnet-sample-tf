@@ -17,3 +17,7 @@ output "dev_gateway_subnet_name" {
 output "waf_subnet_name" {
   value = "${azurerm_subnet.waf.name}"
 }
+
+output "dns_zone_name" {
+  value = "${var.dns_zone_name}"
+}

@@ -19,3 +19,19 @@ resource "azurerm_subnet" "default" {
   virtual_network_name = "${azurerm_virtual_network.main.name}"
   address_prefix       = "172.16.1.0/24"
 }
+
+resource "null_resource" "dns" {
+  triggers {
+    vnet_id = "${azurerm_virtual_network.main.id}"
+  }
+
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/create_dns_private_zone.sh"
+
+    environment {
+      zone_name           = "${var.dns_zone_name}"
+      resource_group_name = "${data.azurerm_resource_group.networking.name}"
+      vnet_id             = "${azurerm_virtual_network.main.id}"
+    }
+  }
+}
