@@ -1,10 +1,7 @@
 variable "resource_prefix" {}
 variable "resource_group_name" {}
+variable "location" {}
 variable "dns_zone_name" {}
-variable "dns_servers" {
-  type = "list"
-}
-
 variable "diagnostic_commands" {
   type = "map"
 }

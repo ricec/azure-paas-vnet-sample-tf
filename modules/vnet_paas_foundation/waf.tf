@@ -1,14 +1,14 @@
 resource "azurerm_public_ip" "waf" {
-  name                         = "${var.resource_prefix}-waf-ip"
-  location                     = "${azurerm_resource_group.networking.location}"
+  name                         = "${var.primary_prefix}-waf-ip"
+  location                     = "${var.primary_location}"
   resource_group_name          = "${azurerm_resource_group.networking.name}"
   public_ip_address_allocation = "dynamic"
   tags                         = "${local.networking_tags}"
 }
 
 resource "azurerm_application_gateway" "waf" {
-  name                = "${var.resource_prefix}-waf"
-  location            = "${azurerm_resource_group.networking.location}"
+  name                = "${var.primary_prefix}-waf"
+  location            = "${var.primary_location}"
   resource_group_name = "${azurerm_resource_group.networking.name}"
   tags                = "${local.networking_tags}"
 

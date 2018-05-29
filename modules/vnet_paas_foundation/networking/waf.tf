@@ -1,6 +1,6 @@
 resource "azurerm_subnet" "waf" {
   name                      = "waf"
-  resource_group_name       = "${data.azurerm_resource_group.networking.name}"
+  resource_group_name       = "${var.resource_group_name}"
   virtual_network_name      = "${azurerm_virtual_network.main.name}"
   address_prefix            = "172.16.2.0/24"
   network_security_group_id = "${azurerm_network_security_group.waf.id}"
@@ -8,8 +8,8 @@ resource "azurerm_subnet" "waf" {
 
 resource "azurerm_network_security_group" "waf" {
   name                = "${var.resource_prefix}-waf-nsg"
-  location            = "${data.azurerm_resource_group.networking.location}"
-  resource_group_name = "${data.azurerm_resource_group.networking.name}"
+  location            = "${var.location}"
+  resource_group_name = "${var.resource_group_name}"
   tags                = "${var.tags}"
 
   security_rule {

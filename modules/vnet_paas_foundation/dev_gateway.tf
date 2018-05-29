@@ -1,6 +1,6 @@
 resource "azurerm_public_ip" "dev_gateway" {
-  name                         = "${var.resource_prefix}-dev-gateway-ip"
-  location                     = "${azurerm_resource_group.networking.location}"
+  name                         = "${var.primary_prefix}-dev-gateway-ip"
+  location                     = "${var.primary_location}"
   resource_group_name          = "${azurerm_resource_group.networking.name}"
   public_ip_address_allocation = "dynamic"
   tags                         = "${local.networking_tags}"
@@ -16,7 +16,7 @@ resource "azurerm_template_deployment" "dev_gateway" {
   deployment_mode     = "Incremental"
 
   parameters {
-    gatewayName         = "${var.resource_prefix}-dev-gateway"
+    gatewayName         = "${var.primary_prefix}-dev-gateway"
     skuName             = "${var.dev_gateway_sku}"
     capacity            = "${var.dev_gateway_capacity}"
     apimSslCert         = "${module.secrets.apim_cert["private_pfx"]}"

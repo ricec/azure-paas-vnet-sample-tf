@@ -3,10 +3,9 @@ provider "azurerm" {
 }
 
 locals {
-  # NOTE: This location must be the friendly name (e.g. South Central US) as
-  # ASEs don't play nicely with normalized location names.
-  location        = "East US"
   resource_prefix = "prefix-dev"
+  base_hostname   = "chrrice.net"
+
 
   base_tags = {
     OwnerTeam = "TheTeam",
@@ -20,11 +19,19 @@ locals {
 }
 
 module "foundation" {
-  source          = "../../../modules/vnet_paas_foundation"
-  location        = "${local.location}"
-  resource_prefix = "${local.resource_prefix}"
-  base_hostname   = "chrrice.net"
-  base_tags       = "${local.base_tags}"
+  source             = "../../../modules/vnet_paas_foundation"
+
+  # NOTE: This location must be the friendly name (e.g. South Central US) as
+  # ASEs don't play nicely with normalized location names.
+  primary_location = "East US"
+  primary_prefix   = "${local.resource_prefix}-eus"
+  primary_hostname = "eus.${local.base_hostname}"
+
+  secondary_location = "West US"
+  secondary_prefix   = "${local.resource_prefix}-wus"
+  secondary_hostname = "wus.${local.base_hostname}"
+
+  base_tags          = "${local.base_tags}"
 
   shared_app_rg_name = "${local.resource_prefix}-app-shared"
   ops_rg_name        = "${local.resource_prefix}-ops"
@@ -40,7 +47,7 @@ module "foundation" {
 
 module "service_1" {
   source              = "../../../modules/service_1"
-  location            = "${local.location}"
+  location            = "${module.foundation.primary_location}"
   resource_prefix     = "${local.resource_prefix}-service-1"
   resource_group_name = "${local.resource_prefix}-service-1"
   ase_id              = "${module.foundation.ase_id}"

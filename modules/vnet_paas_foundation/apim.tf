@@ -1,5 +1,5 @@
 locals {
-  apim_base_hostname = "api.${var.base_hostname}"
+  apim_base_hostname = "api.${var.primary_hostname}"
   apim_portal_hostname = "docs.${local.apim_base_hostname}"
   apim_scm_hostname = "scm.${local.apim_base_hostname}"
 }
@@ -11,7 +11,7 @@ resource "azurerm_template_deployment" "apim" {
   deployment_mode = "Incremental"
 
   parameters {
-    apimName       = "${var.resource_prefix}-apim"
+    apimName       = "${var.primary_prefix}-apim"
     publisherEmail = "${var.apim_publisher_email}"
     publisherName  = "${var.apim_publisher_name}"
     sku            = "${var.apim_sku}"

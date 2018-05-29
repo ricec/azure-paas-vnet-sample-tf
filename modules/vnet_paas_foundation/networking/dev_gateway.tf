@@ -1,6 +1,6 @@
 resource "azurerm_subnet" "dev_gateway" {
   name                      = "dev-gateway"
-  resource_group_name       = "${data.azurerm_resource_group.networking.name}"
+  resource_group_name       = "${var.resource_group_name}"
   virtual_network_name      = "${azurerm_virtual_network.main.name}"
   address_prefix            = "172.16.5.0/24"
   network_security_group_id = "${azurerm_network_security_group.dev_gateway.id}"
@@ -8,8 +8,8 @@ resource "azurerm_subnet" "dev_gateway" {
 
 resource "azurerm_network_security_group" "dev_gateway" {
   name                = "${var.resource_prefix}-dev-gateway-nsg"
-  location            = "${data.azurerm_resource_group.networking.location}"
-  resource_group_name = "${data.azurerm_resource_group.networking.name}"
+  location            = "${var.location}"
+  resource_group_name = "${var.resource_group_name}"
   tags                = "${var.tags}"
 
   security_rule {

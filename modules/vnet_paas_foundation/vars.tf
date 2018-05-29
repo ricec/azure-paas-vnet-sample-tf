@@ -1,6 +1,11 @@
-variable "location" {}
-variable "resource_prefix" {}
-variable "base_hostname" {}
+variable "primary_location" {}
+variable "primary_prefix" {}
+variable "primary_hostname" {}
+
+variable "secondary_location" {}
+variable "secondary_prefix" {}
+variable "secondary_hostname" {}
+
 variable "base_tags" {
   default = {}
 }
@@ -43,10 +48,6 @@ variable "networking_tags" {
   default = {
     Tier = "Networking"
   }
-}
-
-variable "dns_servers" {
-  default = []
 }
 
 
