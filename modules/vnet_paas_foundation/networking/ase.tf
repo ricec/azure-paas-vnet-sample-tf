@@ -1,8 +1,9 @@
 resource "azurerm_subnet" "ase" {
-  name                 = "ase"
-  resource_group_name  = "${data.azurerm_resource_group.networking.name}"
-  virtual_network_name = "${azurerm_virtual_network.main.name}"
-  address_prefix       = "172.16.4.0/24"
+  name                      = "ase"
+  resource_group_name       = "${data.azurerm_resource_group.networking.name}"
+  virtual_network_name      = "${azurerm_virtual_network.main.name}"
+  address_prefix            = "172.16.4.0/24"
+  network_security_group_id = "${azurerm_network_security_group.ase.id}"
 }
 
 resource "azurerm_network_security_group" "ase" {
@@ -11,21 +12,26 @@ resource "azurerm_network_security_group" "ase" {
   resource_group_name = "${data.azurerm_resource_group.networking.name}"
   tags                = "${var.tags}"
 
+
   security_rule {
-    name = "AllowHttps"
-    description = "This is the Https inbound rule"
+    name = "AllowInboundHttpsFromVnet"
+    description = "Allow HTTPs inbound from VNet"
     protocol = "Tcp"
     source_port_range = "*"
     destination_port_range = "443"
-    source_address_prefix = "*"
+    source_address_prefix = "VirtualNetwork"
     destination_address_prefix = "*"
     access = "Allow"
     priority = 110
     direction = "Inbound"
   }
 
+  ## ASE Dependencies
+  ## https://docs.microsoft.com/en-us/azure/app-service/environment/network-info#ase-dependencies
+
+  # Inbound
   security_rule {
-    name = "AllowAzureHealthProbes"
+    name = "AllowInboundManagementPorts"
     description = "Required port used by Azure infrastructure for managing and maintaining App Service Environments"
     protocol = "Tcp"
     source_port_range = "*"
@@ -37,12 +43,13 @@ resource "azurerm_network_security_group" "ase" {
     direction = "Inbound"
   }
 
+  # Outbound
   security_rule {
-    name = "AllowOutboundSQL_1433"
-    description = "Allowing ASE to communicate to SQL DB"
+    name = "AllowOutboundHttps"
+    description = "HTTPS outbound required by ASE for access to various Azure APIs"
     protocol = "Tcp"
     source_port_range = "*"
-    destination_port_range = "1433"
+    destination_port_range = "443"
     source_address_prefix = "*"
     destination_address_prefix = "*"
     access = "Allow"
@@ -51,11 +58,11 @@ resource "azurerm_network_security_group" "ase" {
   }
 
   security_rule {
-    name = "AllowOutboundSQL_11000-11999"
-    description = "Allowing ASE to communicate to SQL DB"
+    name = "AllowOutboundSQL"
+    description = "SQL outbound required for ASE to access Azure SQL Database"
     protocol = "Tcp"
     source_port_range = "*"
-    destination_port_range = "11000-11999"
+    destination_port_ranges = ["1433", "11000-11999", "14000-14999"]
     source_address_prefix = "*"
     destination_address_prefix = "*"
     access = "Allow"
@@ -64,11 +71,11 @@ resource "azurerm_network_security_group" "ase" {
   }
 
   security_rule {
-    name = "AllowOutboundSQL_14000-14999"
-    description = "Allowing ASE to communicate to SQL DB"
-    protocol = "Tcp"
+    name = "AllowOutboundDns"
+    description = "DNS outbound required for ASE to access Azure DNS"
+    protocol = "*"
     source_port_range = "*"
-    destination_port_range = "14000-14999"
+    destination_port_range = "53"
     source_address_prefix = "*"
     destination_address_prefix = "*"
     access = "Allow"
@@ -77,15 +84,15 @@ resource "azurerm_network_security_group" "ase" {
   }
 
   security_rule {
-    name = "AllowOutboundtoAzureDomain"
-    description = "Allowing Outbound access on port 53 is required for communication with Azure DNS servers"
+    name = "DenyInternetOutbound"
+    description = "Deny remaining internet-bound traffic"
     protocol = "*"
     source_port_range = "*"
-    destination_port_range = "53"
+    destination_port_range = "*"
     source_address_prefix = "*"
-    destination_address_prefix = "*"
-    access = "Allow"
-    priority = 130
+    destination_address_prefix = "Internet"
+    access = "Deny"
+    priority = 4000
     direction = "Outbound"
   }
 
