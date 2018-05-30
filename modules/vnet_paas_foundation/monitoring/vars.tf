@@ -5,10 +5,6 @@ variable "secondary_location" {}
 variable "resource_group_name" {}
 variable "oms_retention" {}
 
-variable "diagnostic_profiles" {
-  type = "map"
-}
-
 variable "oms_solutions" {
   default = [
     "AzureWebAppsAnalytics",

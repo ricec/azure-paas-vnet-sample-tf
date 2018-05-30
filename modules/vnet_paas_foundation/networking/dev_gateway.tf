@@ -40,7 +40,7 @@ resource "azurerm_network_security_group" "dev_gateway" {
   }
 
   provisioner "local-exec" {
-    command = "${var.diagnostic_commands["nsg"]}"
+    command = "${module.nsg_diagnostics.command}"
 
     environment {
       resource_id = "${azurerm_network_security_group.dev_gateway.id}"

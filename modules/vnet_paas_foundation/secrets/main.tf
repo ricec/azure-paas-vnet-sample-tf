@@ -38,7 +38,7 @@ resource "azurerm_key_vault" "main" {
 
   # Configure diagnostic settings
   provisioner "local-exec" {
-    command = "${var.diagnostic_commands["key_vault"]}"
+    command = "${module.key_vault_diagnostics.command}"
 
     environment {
       resource_id = "${azurerm_key_vault.main.id}"
@@ -72,4 +72,12 @@ data "external" "ase_ssl_cert" {
     "${var.ase_cert_config["cert_name"]}",
     "${azurerm_key_vault.main.name}"
   ]
+}
+
+module "key_vault_diagnostics" {
+  source             = "../../diagnostic_setting"
+  resource_type      = "key_vault"
+  retention          = "${var.key_vault_diagnostic_retention}"
+  storage_account_id = "${var.diagnostics_storage_account_id}"
+  oms_workspace_id   = "${var.oms_workspace_id}"
 }

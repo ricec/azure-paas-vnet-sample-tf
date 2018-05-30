@@ -115,7 +115,7 @@ resource "azurerm_application_gateway" "waf" {
   }
 
   provisioner "local-exec" {
-    command = "${module.monitoring.diagnostic_commands["waf"]}"
+    command = "${module.app_gateway_diagnostics.command}"
 
     environment {
       resource_id = "${azurerm_application_gateway.waf.id}"

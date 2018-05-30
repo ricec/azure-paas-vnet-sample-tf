@@ -160,7 +160,7 @@ resource "azurerm_network_security_group" "apim" {
   }
 
   provisioner "local-exec" {
-    command = "${var.diagnostic_commands["nsg"]}"
+    command = "${module.nsg_diagnostics.command}"
 
     environment {
       resource_id = "${azurerm_network_security_group.apim.id}"

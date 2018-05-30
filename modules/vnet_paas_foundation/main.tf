@@ -32,12 +32,20 @@ module "monitoring" {
   resource_group_name = "${azurerm_resource_group.ops.name}"
   oms_retention       = "${var.oms_retention}"
   tags                = "${local.ops_tags}"
+}
 
-  diagnostic_profiles = {
-    apim        = 365
-    key_vault   = 365
-    nsg         = 365
-    waf         = 365
-    dev_gateway = 365
-  }
+module "apim_diagnostics" {
+  source             = "../diagnostic_setting"
+  resource_type      = "apim"
+  retention          = "${var.diagnostic_retentions["app_gateway"]}"
+  storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
+  oms_workspace_id   = "${module.monitoring.oms_workspace_id}"
+}
+
+module "app_gateway_diagnostics" {
+  source             = "../diagnostic_setting"
+  resource_type      = "app_gateway"
+  retention          = "${var.diagnostic_retentions["app_gateway"]}"
+  storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
+  oms_workspace_id   = "${module.monitoring.oms_workspace_id}"
 }

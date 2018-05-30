@@ -36,7 +36,7 @@ resource "azurerm_template_deployment" "dev_gateway" {
   }
 
   provisioner "local-exec" {
-    command = "${module.monitoring.diagnostic_commands["dev_gateway"]}"
+    command = "${module.app_gateway_diagnostics.command}"
 
     environment {
       resource_id = "${azurerm_template_deployment.dev_gateway.outputs["gatewayId"]}"

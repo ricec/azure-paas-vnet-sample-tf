@@ -50,6 +50,15 @@ variable "networking_tags" {
   }
 }
 
+variable "diagnostic_retentions" {
+  default = {
+    apim        = 365
+    app_gateway = 365
+    key_vault   = 365
+    nsg         = 365
+  }
+}
+
 
 # Ingress
 

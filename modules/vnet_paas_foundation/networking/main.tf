@@ -30,3 +30,11 @@ resource "null_resource" "dns" {
     }
   }
 }
+
+module "nsg_diagnostics" {
+  source             = "../../diagnostic_setting"
+  resource_type      = "nsg"
+  retention          = "${var.nsg_diagnostic_retention}"
+  storage_account_id = "${var.diagnostics_storage_account_id}"
+  oms_workspace_id   = "${var.oms_workspace_id}"
+}

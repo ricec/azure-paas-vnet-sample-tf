@@ -1,11 +1,13 @@
 module "secrets" {
-  source                       = "./secrets"
-  resource_prefix              = "${var.primary_prefix}"
-  resource_group_name          = "${azurerm_resource_group.ops.name}"
-  key_vault_sku                = "${var.key_vault_sku}"
-  key_vault_deployer_object_id = "${var.key_vault_deployer_object_id}"
-  diagnostic_commands          = "${module.monitoring.diagnostic_commands}"
-  tags                         = "${local.ops_tags}"
+  source                         = "./secrets"
+  resource_prefix                = "${var.primary_prefix}"
+  resource_group_name            = "${azurerm_resource_group.ops.name}"
+  key_vault_sku                  = "${var.key_vault_sku}"
+  key_vault_deployer_object_id   = "${var.key_vault_deployer_object_id}"
+  key_vault_diagnostic_retention = "${var.diagnostic_retentions["key_vault"]}"
+  diagnostics_storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
+  oms_workspace_id               = "${module.monitoring.oms_workspace_id}"
+  tags                           = "${local.ops_tags}"
 
   apim_cert_config = {
     cert_name   = "${replace(local.apim_base_hostname, ".", "-")}"
@@ -21,13 +23,15 @@ module "secrets" {
 }
 
 module "networking" {
-  source              = "./networking"
-  resource_prefix     = "${var.primary_prefix}"
-  resource_group_name = "${var.networking_rg_name}"
-  location            = "${var.primary_location}"
-  dns_zone_name       = "${var.primary_hostname}"
-  diagnostic_commands = "${module.monitoring.diagnostic_commands}"
-  tags                = "${local.networking_tags}"
+  source                         = "./networking"
+  resource_prefix                = "${var.primary_prefix}"
+  resource_group_name            = "${var.networking_rg_name}"
+  location                       = "${var.primary_location}"
+  dns_zone_name                  = "${var.primary_hostname}"
+  nsg_diagnostic_retention       = "${var.diagnostic_retentions["nsg"]}"
+  diagnostics_storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
+  oms_workspace_id               = "${module.monitoring.oms_workspace_id}"
+  tags                           = "${local.networking_tags}"
 }
 
 module "ase" {

@@ -26,7 +26,7 @@ resource "azurerm_template_deployment" "apim" {
   }
 
   provisioner "local-exec" {
-    command = "${module.monitoring.diagnostic_commands["apim"]}"
+    command = "${module.apim_diagnostics.command}"
 
     environment {
       resource_id = "${azurerm_template_deployment.apim.outputs["apimId"]}"
