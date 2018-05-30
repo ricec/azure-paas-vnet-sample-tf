@@ -25,7 +25,10 @@ resource "azurerm_resource_group" "networking" {
 
 module "monitoring" {
   source              = "./monitoring"
-  resource_prefix     = "${var.primary_prefix}"
+  primary_prefix      = "${var.primary_prefix}"
+  secondary_prefix    = "${var.secondary_prefix}"
+  primary_location    = "${var.primary_location}"
+  secondary_location  = "${var.secondary_location}"
   resource_group_name = "${azurerm_resource_group.ops.name}"
   oms_retention       = "${var.oms_retention}"
   tags                = "${local.ops_tags}"

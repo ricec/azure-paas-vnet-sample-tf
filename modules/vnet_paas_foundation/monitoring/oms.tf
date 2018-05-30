@@ -1,7 +1,7 @@
 resource "azurerm_log_analytics_workspace" "monitoring" {
-  name                = "${var.resource_prefix}-oms"
-  location            = "${data.azurerm_resource_group.monitoring.location}"
-  resource_group_name = "${data.azurerm_resource_group.monitoring.name}"
+  name                = "${var.primary_prefix}-oms"
+  location            = "${var.primary_location}"
+  resource_group_name = "${var.resource_group_name}"
   sku                 = "PerNode"
   retention_in_days   = "${var.oms_retention}"
   tags                = "${var.tags}"
@@ -10,8 +10,8 @@ resource "azurerm_log_analytics_workspace" "monitoring" {
 resource "azurerm_log_analytics_solution" "monitoring" {
   count                 = "${length(var.oms_solutions)}"
   solution_name         = "${element(var.oms_solutions, count.index)}"
-  location              = "${data.azurerm_resource_group.monitoring.location}"
-  resource_group_name   = "${data.azurerm_resource_group.monitoring.name}"
+  location              = "${var.primary_location}"
+  resource_group_name   = "${var.resource_group_name}"
   workspace_resource_id = "${azurerm_log_analytics_workspace.monitoring.id}"
   workspace_name        = "${azurerm_log_analytics_workspace.monitoring.name}"
 
@@ -23,7 +23,7 @@ resource "azurerm_log_analytics_solution" "monitoring" {
 
 resource "azurerm_template_deployment" "monitoring_oms_datasource" {
   name                = "oms-datasource-activity-log"
-  resource_group_name = "${data.azurerm_resource_group.monitoring.name}"
+  resource_group_name = "${var.resource_group_name}"
   template_body       = "${file("${path.module}/oms_datasource.json")}"
 
   parameters {

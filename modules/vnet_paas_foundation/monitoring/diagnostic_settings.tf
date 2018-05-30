@@ -23,7 +23,7 @@ data "template_file" "create_diagnostic_settings_command" {
   vars {
     logs_json          = "${data.template_file.log_settings.*.rendered[count.index]}"
     metrics_json       = "${data.template_file.metric_settings.*.rendered[count.index]}"
-    storage_account_id = "${azurerm_storage_account.diagnostics.id}"
+    storage_account_id = "${azurerm_storage_account.primary.id}"
     oms_workspace_id   = "${azurerm_log_analytics_workspace.monitoring.id}"
   }
 }
