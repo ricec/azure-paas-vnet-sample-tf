@@ -45,8 +45,8 @@ resource "azurerm_application_gateway" "waf" {
   }
 
   backend_address_pool {
-    name = "apimBackendPool"
-    ip_address_list = ["${azurerm_template_deployment.apim.outputs["ipAddress"]}"]
+    name      = "apimBackendPool"
+    fqdn_list = ["${local.apim_base_hostname}"]
   }
 
   backend_http_settings {

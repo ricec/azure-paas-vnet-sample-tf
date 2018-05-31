@@ -47,7 +47,7 @@ module "ase" {
   tags                   = "${merge(var.base_tags, var.shared_app_tags)}"
 }
 
-resource "azurerm_dns_a_record" "ase" {
+resource "azurerm_dns_a_record" "ase_wildcard" {
   name                = "*.ase"
   zone_name           = "${module.networking.dns_zone_name}"
   resource_group_name = "${azurerm_resource_group.networking.name}"
@@ -55,7 +55,7 @@ resource "azurerm_dns_a_record" "ase" {
   records             = ["${module.ase.ilb_ip}"]
 }
 
-resource "azurerm_dns_a_record" "ase_scm" {
+resource "azurerm_dns_a_record" "ase_scm_wildcard" {
   name                = "*.scm.ase"
   zone_name           = "${module.networking.dns_zone_name}"
   resource_group_name = "${azurerm_resource_group.networking.name}"
