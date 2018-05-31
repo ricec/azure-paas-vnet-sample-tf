@@ -62,3 +62,19 @@ resource "azurerm_dns_a_record" "ase_scm" {
   ttl                 = 300
   records             = ["${module.ase.ilb_ip}"]
 }
+
+resource "azurerm_dns_a_record" "apim" {
+  name                = "api"
+  zone_name           = "${module.networking.dns_zone_name}"
+  resource_group_name = "${azurerm_resource_group.networking.name}"
+  ttl                 = 300
+  records             = ["${azurerm_template_deployment.apim.outputs["ipAddress"]}"]
+}
+
+resource "azurerm_dns_a_record" "apim_wildcard" {
+  name                = "*.api"
+  zone_name           = "${module.networking.dns_zone_name}"
+  resource_group_name = "${azurerm_resource_group.networking.name}"
+  ttl                 = 300
+  records             = ["${azurerm_template_deployment.apim.outputs["ipAddress"]}"]
+}
