@@ -23,10 +23,7 @@ resource "azurerm_app_service" "main" {
   tags                    = "${var.tags}"
 
   site_config {
-    always_on              = true
-    java_version           = "1.7"
-    java_container         = "JETTY"
-    java_container_version = "9.3"
+    always_on = true
   }
 
   # TODO - Figure out diagnostic logging for web apps

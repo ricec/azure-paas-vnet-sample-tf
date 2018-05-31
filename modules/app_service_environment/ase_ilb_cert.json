@@ -1,0 +1,56 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "aseName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The friendly name of the ASE's region (e.g. South Central US). This is needed because `location` on the ASE doesn't accept non-friendly names (e.g. southcentralus)"
+      }
+    },
+    "keyVaultId": {
+      "type": "string"
+    },
+    "certSecretName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "certName": "[concat(parameters('certSecretName'), '_', parameters('aseName'), '_InternalLoadBalancingASE')]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-03-01",
+      "type": "Microsoft.Web/certificates",
+      "name": "[variables('certName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "keyVaultId": "[parameters('keyVaultId')]",
+        "keyVaultSecretName": "[parameters('certSecretName')]",
+        "hostingEnvironmentProfile": {
+          "id": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('aseName'))]"
+        }
+      }
+    },
+    {
+      "name": "[parameters('aseName')]",
+      "type": "Microsoft.Web/hostingEnvironments",
+      "apiVersion": "2015-02-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[variables('certName')]"
+      ],
+      "properties": {
+        "clusterSettings": [
+          {
+            "name": "DefaultSslCertificateThumbprint",
+            "value": "[reference(resourceId('Microsoft.Web/certificates', variables('certName'))).Thumbprint]"
+          }
+        ]
+      }
+    }
+  ]
+}
