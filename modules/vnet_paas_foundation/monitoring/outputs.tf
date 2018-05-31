@@ -7,5 +7,5 @@ output "primary_diagnostics_storage_account_id" {
 }
 
 output "secondary_diagnostics_storage_account_id" {
-  value = "${azurerm_storage_account.primary.id}"
+  value = "${azurerm_storage_account.secondary.id}"
 }
