@@ -45,6 +45,19 @@ resource "azurerm_network_security_group" "ase" {
 
   # Outbound
   security_rule {
+    name = "AllowOutboundHttp"
+    description = "HTTP outbound required by ASE for access to Azure Storage"
+    protocol = "Tcp"
+    source_port_range = "*"
+    destination_port_range = "80"
+    source_address_prefix = "*"
+    destination_address_prefix = "*"
+    access = "Allow"
+    priority = 100
+    direction = "Outbound"
+  }
+
+  security_rule {
     name = "AllowOutboundHttps"
     description = "HTTPS outbound required by ASE for access to various Azure APIs"
     protocol = "Tcp"
@@ -53,7 +66,7 @@ resource "azurerm_network_security_group" "ase" {
     source_address_prefix = "*"
     destination_address_prefix = "*"
     access = "Allow"
-    priority = 100
+    priority = 110
     direction = "Outbound"
   }
 
@@ -66,7 +79,7 @@ resource "azurerm_network_security_group" "ase" {
     source_address_prefix = "*"
     destination_address_prefix = "*"
     access = "Allow"
-    priority = 110
+    priority = 120
     direction = "Outbound"
   }
 
@@ -79,7 +92,7 @@ resource "azurerm_network_security_group" "ase" {
     source_address_prefix = "*"
     destination_address_prefix = "*"
     access = "Allow"
-    priority = 120
+    priority = 130
     direction = "Outbound"
   }
 
