@@ -1,16 +1,16 @@
 resource "azurerm_public_ip" "waf" {
-  name                         = "${module.primary_region.config["prefix"]}-waf-ip"
-  location                     = "${module.primary_region.config["location"]}"
-  resource_group_name          = "${azurerm_resource_group.networking.name}"
+  name                         = "${var.region["prefix"]}-waf-ip"
+  location                     = "${var.region["location"]}"
+  resource_group_name          = "${var.resource_group_name}"
   public_ip_address_allocation = "dynamic"
-  tags                         = "${local.networking_tags}"
+  tags                         = "${var.tags}"
 }
 
 resource "azurerm_application_gateway" "waf" {
-  name                = "${module.primary_region.config["prefix"]}-waf"
-  location            = "${module.primary_region.config["location"]}"
-  resource_group_name = "${azurerm_resource_group.networking.name}"
-  tags                = "${local.networking_tags}"
+  name                = "${var.region["prefix"]}-waf"
+  location            = "${var.region["location"]}"
+  resource_group_name = "${var.resource_group_name}"
+  tags                = "${var.tags}"
 
   sku {
     tier     = "WAF"
@@ -20,7 +20,7 @@ resource "azurerm_application_gateway" "waf" {
 
   gateway_ip_configuration {
     name      = "appGatewayIpConfig"
-    subnet_id = "${module.networking.vnet_id}/subnets/${module.networking.waf_subnet_name}"
+    subnet_id = "${azurerm_subnet.waf.id}"
   }
 
   frontend_ip_configuration {
@@ -35,18 +35,18 @@ resource "azurerm_application_gateway" "waf" {
 
   ssl_certificate {
     name     = "gatewayCert"
-    data     = "${module.apim_cert.private_pfx}"
+    data     = "${var.apim_private_pfx}"
     password = ""
   }
 
   authentication_certificate {
     name = "apimPublicKey"
-    data = "${module.apim_cert.public_cer}"
+    data = "${var.apim_public_cer}"
   }
 
   backend_address_pool {
     name      = "apimBackendPool"
-    fqdn_list = ["${local.apim_primary_hostname}"]
+    fqdn_list = ["${var.region["apim_hostname"]}"]
   }
 
   backend_http_settings {
@@ -81,7 +81,7 @@ resource "azurerm_application_gateway" "waf" {
     name                = "apimHttpsProbe"
     protocol            = "Https"
     path                = "/status-0123456789abcdef"
-    host                = "${local.apim_primary_hostname}"
+    host                = "${var.region["apim_hostname"]}"
     interval            = 30
     timeout             = 30
     unhealthy_threshold = 8

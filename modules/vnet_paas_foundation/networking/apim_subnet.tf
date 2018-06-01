@@ -7,8 +7,8 @@ resource "azurerm_subnet" "apim" {
 }
 
 resource "azurerm_network_security_group" "apim" {
-  name                = "${var.resource_prefix}-apim-nsg"
-  location            = "${var.location}"
+  name                = "${var.region["prefix"]}-apim-nsg"
+  location            = "${var.region["location"]}"
   resource_group_name = "${var.resource_group_name}"
   tags                = "${var.tags}"
 

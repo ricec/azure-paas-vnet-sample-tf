@@ -7,8 +7,8 @@ resource "azurerm_subnet" "waf" {
 }
 
 resource "azurerm_network_security_group" "waf" {
-  name                = "${var.resource_prefix}-waf-nsg"
-  location            = "${var.location}"
+  name                = "${var.region["prefix"]}-waf-nsg"
+  location            = "${var.region["location"]}"
   resource_group_name = "${var.resource_group_name}"
   tags                = "${var.tags}"
 

@@ -7,8 +7,8 @@ resource "azurerm_subnet" "dev_gateway" {
 }
 
 resource "azurerm_network_security_group" "dev_gateway" {
-  name                = "${var.resource_prefix}-dev-gateway-nsg"
-  location            = "${var.location}"
+  name                = "${var.region["prefix"]}-dev-gateway-nsg"
+  location            = "${var.region["location"]}"
   resource_group_name = "${var.resource_group_name}"
   tags                = "${var.tags}"
 

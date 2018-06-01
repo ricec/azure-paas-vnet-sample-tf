@@ -7,8 +7,8 @@ resource "azurerm_subnet" "ase" {
 }
 
 resource "azurerm_network_security_group" "ase" {
-  name                = "${var.resource_prefix}-ase-nsg"
-  location            = "${var.location}"
+  name                = "${var.region["prefix"]}-ase-nsg"
+  location            = "${var.region["location"]}"
   resource_group_name = "${var.resource_group_name}"
   tags                = "${var.tags}"
 
