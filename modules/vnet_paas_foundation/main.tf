@@ -46,11 +46,3 @@ module "monitoring" {
   tags                = "${local.ops_tags}"
 }
 
-module "apim_diagnostics" {
-  source             = "../diagnostic_setting"
-  resource_type      = "apim"
-  retention          = "${var.diagnostic_retentions["app_gateway"]}"
-  storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
-  oms_workspace_id   = "${module.monitoring.oms_workspace_id}"
-}
-

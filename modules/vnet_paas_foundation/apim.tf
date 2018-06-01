@@ -39,6 +39,14 @@ resource "azurerm_template_deployment" "apim" {
   }
 }
 
+module "apim_diagnostics" {
+  source             = "../diagnostic_setting"
+  resource_type      = "apim"
+  retention          = "${var.diagnostic_retentions["apim"]}"
+  storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
+  oms_workspace_id   = "${module.monitoring.oms_workspace_id}"
+}
+
 module "apim_cert" {
   source         = "../key_vault_certificate"
   key_vault_name = "${module.secrets.key_vault_name}"
@@ -50,4 +58,20 @@ module "apim_cert" {
     "${local.apim_secondary_hostname}",
     "*.${local.apim_secondary_hostname}"
   ]
+}
+
+resource "azurerm_dns_a_record" "apim" {
+  name                = "api"
+  zone_name           = "${module.networking.dns_zone_name}"
+  resource_group_name = "${azurerm_resource_group.networking.name}"
+  ttl                 = 300
+  records             = ["${azurerm_template_deployment.apim.outputs["ipAddress"]}"]
+}
+
+resource "azurerm_dns_a_record" "apim_wildcard" {
+  name                = "*.api"
+  zone_name           = "${module.networking.dns_zone_name}"
+  resource_group_name = "${azurerm_resource_group.networking.name}"
+  ttl                 = 300
+  records             = ["${azurerm_template_deployment.apim.outputs["ipAddress"]}"]
 }
