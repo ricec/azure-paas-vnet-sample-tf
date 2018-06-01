@@ -49,7 +49,7 @@ module "apim_diagnostics" {
 
 module "apim_cert" {
   source         = "../key_vault_certificate"
-  key_vault_name = "${module.secrets.key_vault_name}"
+  key_vault_name = "${azurerm_key_vault.main.name}"
   cert_name      = "${replace(local.api_hostname, ".", "-")}"
   common_name    = "${local.api_hostname}"
   alt_names      = [

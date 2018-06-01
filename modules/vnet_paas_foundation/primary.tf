@@ -1,15 +1,3 @@
-module "secrets" {
-  source                         = "./secrets"
-  resource_prefix                = "${module.primary_region.config["prefix"]}"
-  resource_group_name            = "${azurerm_resource_group.ops.name}"
-  key_vault_sku                  = "${var.key_vault_sku}"
-  key_vault_deployer_object_id   = "${var.key_vault_deployer_object_id}"
-  key_vault_diagnostic_retention = "${var.diagnostic_retentions["key_vault"]}"
-  diagnostics_storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
-  oms_workspace_id               = "${module.monitoring.oms_workspace_id}"
-  tags                           = "${local.ops_tags}"
-}
-
 module "networking" {
   source                         = "./networking"
   region                         = "${module.primary_region.config}"

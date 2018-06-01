@@ -1,16 +1,9 @@
-provider "azurerm" {}
-data "azurerm_client_config" "current" {}
-
-data "azurerm_resource_group" "ops" {
-  name = "${var.resource_group_name}"
-}
-
 resource "azurerm_key_vault" "main" {
-  name                = "${var.resource_prefix}-vault"
-  location            = "${data.azurerm_resource_group.ops.location}"
-  resource_group_name = "${data.azurerm_resource_group.ops.name}"
+  name                = "${module.primary_region.config["prefix"]}-vault"
+  location            = "${module.primary_region.config["location"]}"
+  resource_group_name = "${azurerm_resource_group.ops.name}"
   tenant_id           = "${data.azurerm_client_config.current.tenant_id}"
-  tags                = "${var.tags}"
+  tags                = "${local.ops_tags}"
 
   sku {
     name = "${var.key_vault_sku}"
@@ -47,9 +40,9 @@ resource "azurerm_key_vault" "main" {
 }
 
 module "key_vault_diagnostics" {
-  source             = "../../diagnostic_setting"
+  source             = "../diagnostic_setting"
   resource_type      = "key_vault"
-  retention          = "${var.key_vault_diagnostic_retention}"
-  storage_account_id = "${var.diagnostics_storage_account_id}"
-  oms_workspace_id   = "${var.oms_workspace_id}"
+  retention          = "${var.diagnostic_retentions["key_vault"]}"
+  storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
+  oms_workspace_id   = "${module.monitoring.oms_workspace_id}"
 }

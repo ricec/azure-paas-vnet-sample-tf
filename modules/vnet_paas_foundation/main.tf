@@ -1,4 +1,5 @@
 provider "azurerm" {}
+data "azurerm_client_config" "current" {}
 
 locals {
   ops_tags          = "${merge(var.base_tags, var.ops_tags)}"
