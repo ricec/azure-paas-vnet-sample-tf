@@ -11,7 +11,7 @@ policy='{
   "x509CertificateProperties": {
     "subject": "CN='$common_name'",
     "subjectAlternativeNames": {
-      "dnsNames": ["'$alt_name'"]
+      "dnsNames": '$alt_names'
     },
     "validityInMonths": 12
   }

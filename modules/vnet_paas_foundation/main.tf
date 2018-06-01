@@ -3,7 +3,21 @@ provider "azurerm" {}
 locals {
   ops_tags          = "${merge(var.base_tags, var.ops_tags)}"
   networking_tags   = "${merge(var.base_tags, var.networking_tags)}"
-  ase_base_hostname = "ase.${var.primary_hostname}"
+  ase_base_hostname = "ase.${module.primary_region.config["hostname"]}"
+}
+
+module "primary_region" {
+  source          = "./region_config"
+  location        = "${var.primary_location}"
+  resource_prefix = "${var.resource_prefix}"
+  base_hostname   = "${var.base_hostname}"
+}
+
+module "secondary_region" {
+  source          = "./region_config"
+  location        = "${var.secondary_location}"
+  resource_prefix = "${var.resource_prefix}"
+  base_hostname   = "${var.base_hostname}"
 }
 
 resource "azurerm_resource_group" "shared_app" {
@@ -25,10 +39,8 @@ resource "azurerm_resource_group" "networking" {
 
 module "monitoring" {
   source              = "./monitoring"
-  primary_prefix      = "${var.primary_prefix}"
-  secondary_prefix    = "${var.secondary_prefix}"
-  primary_location    = "${var.primary_location}"
-  secondary_location  = "${var.secondary_location}"
+  primary_region      = "${module.primary_region.config}"
+  secondary_region    = "${module.secondary_region.config}"
   resource_group_name = "${azurerm_resource_group.ops.name}"
   oms_retention       = "${var.oms_retention}"
   tags                = "${local.ops_tags}"

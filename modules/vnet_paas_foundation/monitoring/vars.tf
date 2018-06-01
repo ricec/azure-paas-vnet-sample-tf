@@ -1,7 +1,9 @@
-variable "primary_prefix" {}
-variable "secondary_prefix" {}
-variable "primary_location" {}
-variable "secondary_location" {}
+variable "primary_region" {
+  type = "map"
+}
+variable "secondary_region" {
+  type = "map"
+}
 variable "resource_group_name" {}
 variable "oms_retention" {}
 

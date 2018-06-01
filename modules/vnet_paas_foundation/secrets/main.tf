@@ -44,34 +44,6 @@ resource "azurerm_key_vault" "main" {
       resource_id = "${azurerm_key_vault.main.id}"
     }
   }
-
-  # Generate APIM self-signed cert
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/generate_cert.sh"
-    environment = "${merge(var.apim_cert_config, map("vault_name", azurerm_key_vault.main.name))}"
-  }
-
-  # Generate ASE self-signed cert
-  provisioner "local-exec" {
-    command     = "${path.module}/scripts/generate_cert.sh"
-    environment = "${merge(var.ase_cert_config, map("vault_name", azurerm_key_vault.main.name))}"
-  }
-}
-
-data "external" "apim_ssl_cert" {
-  program = [
-    "${path.module}/scripts/get_key_vault_certificate.sh",
-    "${var.apim_cert_config["cert_name"]}",
-    "${azurerm_key_vault.main.name}"
-  ]
-}
-
-data "external" "ase_ssl_cert" {
-  program = [
-    "${path.module}/scripts/get_key_vault_certificate.sh",
-    "${var.ase_cert_config["cert_name"]}",
-    "${azurerm_key_vault.main.name}"
-  ]
 }
 
 module "key_vault_diagnostics" {

@@ -4,8 +4,6 @@ provider "azurerm" {
 
 locals {
   resource_prefix = "prefix-dev"
-  base_hostname   = "chrrice.net"
-
 
   base_tags = {
     OwnerTeam = "TheTeam",
@@ -23,14 +21,10 @@ module "foundation" {
 
   # NOTE: This location must be the friendly name (e.g. South Central US) as
   # ASEs don't play nicely with normalized location names.
-  primary_location = "East US"
-  primary_prefix   = "${local.resource_prefix}-eus"
-  primary_hostname = "eus.${local.base_hostname}"
-
+  primary_location   = "East US"
   secondary_location = "West US"
-  secondary_prefix   = "${local.resource_prefix}-wus"
-  secondary_hostname = "wus.${local.base_hostname}"
-
+  resource_prefix    = "${local.resource_prefix}"
+  base_hostname      = "chrrice.net"
   base_tags          = "${local.base_tags}"
 
   shared_app_rg_name = "${local.resource_prefix}-app-shared"
@@ -41,7 +35,6 @@ module "foundation" {
 
   apim_publisher_email = "chrrice@microsoft.com"
   apim_publisher_name  = "chrrice"
-  apim_sku             = "Developer"
   apim_sku_count       = 1
 }
 

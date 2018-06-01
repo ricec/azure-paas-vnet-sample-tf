@@ -1,8 +1,8 @@
 provider "azurerm" {}
 
 resource "azurerm_log_analytics_workspace" "monitoring" {
-  name                = "${var.primary_prefix}-oms"
-  location            = "${var.primary_location}"
+  name                = "${var.primary_region["prefix"]}-oms"
+  location            = "${var.primary_region["location"]}"
   resource_group_name = "${var.resource_group_name}"
   sku                 = "PerNode"
   retention_in_days   = "${var.oms_retention}"
@@ -12,7 +12,7 @@ resource "azurerm_log_analytics_workspace" "monitoring" {
 resource "azurerm_log_analytics_solution" "monitoring" {
   count                 = "${length(var.oms_solutions)}"
   solution_name         = "${element(var.oms_solutions, count.index)}"
-  location              = "${var.primary_location}"
+  location              = "${var.primary_region["location"]}"
   resource_group_name   = "${var.resource_group_name}"
   workspace_resource_id = "${azurerm_log_analytics_workspace.monitoring.id}"
   workspace_name        = "${azurerm_log_analytics_workspace.monitoring.name}"
@@ -36,8 +36,8 @@ resource "azurerm_template_deployment" "monitoring_oms_datasource" {
 }
 
 resource "azurerm_storage_account" "primary" {
-  name                      = "${replace(var.primary_prefix, "-", "")}logs"
-  location                  = "${var.primary_location}"
+  name                      = "${var.primary_region["alphanum_prefix"]}logs"
+  location                  = "${var.primary_region["location"]}"
   resource_group_name       = "${var.resource_group_name}"
   account_kind              = "StorageV2"
   account_tier              = "Standard"
@@ -49,8 +49,8 @@ resource "azurerm_storage_account" "primary" {
 }
 
 resource "azurerm_storage_account" "secondary" {
-  name                      = "${replace(var.secondary_prefix, "-", "")}logs"
-  location                  = "${var.secondary_location}"
+  name                      = "${var.secondary_region["alphanum_prefix"]}logs"
+  location                  = "${var.secondary_region["location"]}"
   resource_group_name       = "${var.resource_group_name}"
   account_kind              = "StorageV2"
   account_tier              = "Standard"

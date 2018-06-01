@@ -1,14 +1,14 @@
 resource "azurerm_public_ip" "waf" {
-  name                         = "${var.primary_prefix}-waf-ip"
-  location                     = "${var.primary_location}"
+  name                         = "${module.primary_region.config["prefix"]}-waf-ip"
+  location                     = "${module.primary_region.config["location"]}"
   resource_group_name          = "${azurerm_resource_group.networking.name}"
   public_ip_address_allocation = "dynamic"
   tags                         = "${local.networking_tags}"
 }
 
 resource "azurerm_application_gateway" "waf" {
-  name                = "${var.primary_prefix}-waf"
-  location            = "${var.primary_location}"
+  name                = "${module.primary_region.config["prefix"]}-waf"
+  location            = "${module.primary_region.config["location"]}"
   resource_group_name = "${azurerm_resource_group.networking.name}"
   tags                = "${local.networking_tags}"
 
@@ -35,18 +35,18 @@ resource "azurerm_application_gateway" "waf" {
 
   ssl_certificate {
     name     = "gatewayCert"
-    data     = "${module.secrets.apim_cert["private_pfx"]}"
+    data     = "${module.apim_cert.private_pfx}"
     password = ""
   }
 
   authentication_certificate {
     name = "apimPublicKey"
-    data = "${module.secrets.apim_cert["public_cer"]}"
+    data = "${module.apim_cert.public_cer}"
   }
 
   backend_address_pool {
     name      = "apimBackendPool"
-    fqdn_list = ["${local.apim_base_hostname}"]
+    fqdn_list = ["${local.apim_primary_hostname}"]
   }
 
   backend_http_settings {
@@ -63,7 +63,6 @@ resource "azurerm_application_gateway" "waf" {
 
   http_listener {
     name                           = "apimProxyListener"
-    host_name                      = "${local.apim_base_hostname}"
     frontend_ip_configuration_name = "frontendIp"
     frontend_port_name             = "httpsFrontendPort"
     protocol                       = "Https"
@@ -78,28 +77,11 @@ resource "azurerm_application_gateway" "waf" {
     backend_http_settings_name = "httpsBackendSettings"
   }
 
-  http_listener {
-    name                           = "apimPortalListener"
-    host_name                      = "${local.apim_portal_hostname}"
-    frontend_ip_configuration_name = "frontendIp"
-    frontend_port_name             = "httpsFrontendPort"
-    protocol                       = "Https"
-    ssl_certificate_name           = "gatewayCert"
-  }
-
-  request_routing_rule {
-    name                       = "apimPortalRule"
-    rule_type                  = "Basic"
-    http_listener_name         = "apimPortalListener"
-    backend_address_pool_name  = "apimBackendPool"
-    backend_http_settings_name = "httpsBackendSettings"
-  }
-
   probe {
     name                = "apimHttpsProbe"
     protocol            = "Https"
     path                = "/status-0123456789abcdef"
-    host                = "${local.apim_base_hostname}"
+    host                = "${local.apim_primary_hostname}"
     interval            = 30
     timeout             = 30
     unhealthy_threshold = 8

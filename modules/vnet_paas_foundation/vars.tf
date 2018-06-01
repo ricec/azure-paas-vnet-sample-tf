@@ -1,10 +1,7 @@
 variable "primary_location" {}
-variable "primary_prefix" {}
-variable "primary_hostname" {}
-
 variable "secondary_location" {}
-variable "secondary_prefix" {}
-variable "secondary_hostname" {}
+variable "resource_prefix" {}
+variable "base_hostname" {}
 
 variable "base_tags" {
   default = {}
@@ -31,7 +28,6 @@ variable "shared_app_tags" {
 }
 variable "apim_publisher_email" {}
 variable "apim_publisher_name" {}
-variable "apim_sku" {}
 variable "apim_sku_count" {}
 
 # Monitoring

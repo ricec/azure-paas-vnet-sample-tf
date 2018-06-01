@@ -17,7 +17,13 @@
     "skuCount": {
       "type": "string"
     },
-    "proxyHostname": {
+    "apiHostname": {
+      "type": "string"
+    },
+    "primaryRegionalHostname": {
+      "type": "string"
+    },
+    "secondaryRegionalHostname": {
       "type": "string"
     },
     "portalHostname": {
@@ -60,7 +66,17 @@
         "hostnameConfigurations": [
           {
             "type": "Proxy",
-            "hostName": "[parameters('proxyHostname')]",
+            "hostName": "[parameters('apiHostname')]",
+            "encodedCertificate": "[parameters('sslCert')]"
+          },
+          {
+            "type": "Proxy",
+            "hostName": "[parameters('primaryRegionalHostname')]",
+            "encodedCertificate": "[parameters('sslCert')]"
+          },
+          {
+            "type": "Proxy",
+            "hostName": "[parameters('secondaryRegionalHostname')]",
             "encodedCertificate": "[parameters('sslCert')]"
           },
           {
