@@ -17,7 +17,7 @@ locals {
 }
 
 module "foundation" {
-  source             = "../../../modules/vnet_paas_foundation"
+  source             = "../../../modules/foundation"
 
   # NOTE: This location must be the friendly name (e.g. South Central US) as
   # ASEs don't play nicely with normalized location names.
