@@ -1,5 +1,5 @@
 resource "azurerm_template_deployment" "ase" {
-  name                = "ase"
+  name                = "ase-${var.ase_name}"
   resource_group_name = "${var.resource_group_name}"
   template_body       = "${file("${path.module}/ase.json")}"
 
@@ -16,7 +16,7 @@ resource "azurerm_template_deployment" "ase" {
 }
 
 resource "azurerm_template_deployment" "ase_ilb_cert" {
-  name                = "ase_ilb_cert"
+  name                = "ase_ilb_cert-${var.ase_name}"
   resource_group_name = "${var.resource_group_name}"
   template_body       = "${file("${path.module}/ase_ilb_cert.json")}"
 

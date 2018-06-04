@@ -1,6 +1,6 @@
-module "networking" {
+module "primary_network" {
   source                         = "./network"
-  region                         = "${module.primary_region.config}"
+  region                         = "${module.primary.config}"
   resource_group_name            = "${var.networking_rg_name}"
   waf_sku                        = "${var.waf_sku}"
   waf_capacity                   = "${var.waf_capacity}"
@@ -21,7 +21,7 @@ module "networking" {
 
 module "secondary_network" {
   source                         = "./network"
-  region                         = "${module.secondary_region.config}"
+  region                         = "${module.secondary.config}"
   resource_group_name            = "${var.networking_rg_name}"
   waf_sku                        = "${var.waf_sku}"
   waf_capacity                   = "${var.waf_capacity}"

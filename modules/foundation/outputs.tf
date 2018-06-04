@@ -6,8 +6,8 @@ output "secondary_location" {
   value = "${var.secondary_location}"
 }
 
-output "ase_id" {
-  value = "${module.ase.ase_id}"
+output "primary_ase_id" {
+  value = "${module.primary_ase.ase_id}"
 }
 
 output "secondary_ase_id" {

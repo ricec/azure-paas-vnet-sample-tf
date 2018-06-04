@@ -1,11 +1,15 @@
+locals {
+  apim_name = "${var.primary_region["prefix"]}-apim"
+}
+
 resource "azurerm_template_deployment" "apim" {
-  name                = "apim"
+  name                = "apim-${local.apim_name}"
   resource_group_name = "${var.resource_group_name}"
   template_body       = "${file("${path.module}/apim.json")}"
   deployment_mode     = "Incremental"
 
   parameters {
-    apimName                  = "${var.primary_region["prefix"]}-apim"
+    apimName                  = "${local.apim_name}"
     publisherEmail            = "${var.publisher_email}"
     publisherName             = "${var.publisher_name}"
     sku                       = "${var.sku}"

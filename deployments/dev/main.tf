@@ -17,7 +17,7 @@ locals {
 }
 
 module "foundation" {
-  source             = "../../../modules/foundation"
+  source             = "../../modules/foundation"
 
   # NOTE: This location must be the friendly name (e.g. South Central US) as
   # ASEs don't play nicely with normalized location names.
@@ -39,10 +39,10 @@ module "foundation" {
 }
 
 module "service_1" {
-  source              = "../../../modules/services/service_1"
+  source              = "../../modules/services/service_1"
   location            = "${module.foundation.primary_location}"
   resource_prefix     = "${local.resource_prefix}-service-1"
   resource_group_name = "${local.resource_prefix}-service-1"
-  ase_id              = "${module.foundation.ase_id}"
+  ase_id              = "${module.foundation.primary_ase_id}"
   tags                = "${merge(local.base_tags, local.service_1_tags)}"
 }

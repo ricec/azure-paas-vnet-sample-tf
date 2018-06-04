@@ -1,6 +1,6 @@
 resource "azurerm_key_vault" "main" {
-  name                = "${module.primary_region.config["prefix"]}-vault"
-  location            = "${module.primary_region.config["location"]}"
+  name                = "${module.primary.config["prefix"]}-vault"
+  location            = "${module.primary.config["location"]}"
   resource_group_name = "${azurerm_resource_group.ops.name}"
   tenant_id           = "${data.azurerm_client_config.current.tenant_id}"
   tags                = "${local.ops_tags}"
