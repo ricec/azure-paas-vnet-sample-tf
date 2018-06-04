@@ -61,16 +61,16 @@ module "apim_cert" {
 }
 
 resource "azurerm_dns_a_record" "apim" {
-  name                = "api"
-  zone_name           = "${module.networking.dns_zone_name}"
+  name                = "${module.primary_region.config["apim_subdomain"]}"
+  zone_name           = "${module.dns.zone_name}"
   resource_group_name = "${azurerm_resource_group.networking.name}"
   ttl                 = 300
   records             = ["${azurerm_template_deployment.apim.outputs["ipAddress"]}"]
 }
 
 resource "azurerm_dns_a_record" "apim_wildcard" {
-  name                = "*.api"
-  zone_name           = "${module.networking.dns_zone_name}"
+  name                = "*.${module.primary_region.config["apim_subdomain"]}"
+  zone_name           = "${module.dns.zone_name}"
   resource_group_name = "${azurerm_resource_group.networking.name}"
   ttl                 = 300
   records             = ["${azurerm_template_deployment.apim.outputs["ipAddress"]}"]

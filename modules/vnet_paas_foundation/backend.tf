@@ -20,16 +20,16 @@ module "ase_cert" {
 }
 
 resource "azurerm_dns_a_record" "ase_wildcard" {
-  name                = "*.ase"
-  zone_name           = "${module.networking.dns_zone_name}"
+  name                = "*.${module.primary_region.config["ase_subdomain"]}"
+  zone_name           = "${module.dns.zone_name}"
   resource_group_name = "${azurerm_resource_group.networking.name}"
   ttl                 = 300
   records             = ["${module.ase.ilb_ip}"]
 }
 
 resource "azurerm_dns_a_record" "ase_scm_wildcard" {
-  name                = "*.scm.ase"
-  zone_name           = "${module.networking.dns_zone_name}"
+  name                = "*.scm.${module.primary_region.config["ase_subdomain"]}"
+  zone_name           = "${module.dns.zone_name}"
   resource_group_name = "${azurerm_resource_group.networking.name}"
   ttl                 = 300
   records             = ["${module.ase.ilb_ip}"]

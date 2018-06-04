@@ -15,22 +15,6 @@ resource "azurerm_subnet" "default" {
   address_prefix       = "172.16.1.0/24"
 }
 
-resource "null_resource" "dns" {
-  triggers {
-    vnet_id = "${azurerm_virtual_network.main.id}"
-  }
-
-  provisioner "local-exec" {
-    command = "${path.module}/scripts/create_dns_private_zone.sh"
-
-    environment {
-      zone_name           = "${var.region["hostname"]}"
-      resource_group_name = "${var.resource_group_name}"
-      vnet_id             = "${azurerm_virtual_network.main.id}"
-    }
-  }
-}
-
 module "nsg_diagnostics" {
   source             = "../../diagnostic_setting"
   resource_type      = "nsg"
