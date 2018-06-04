@@ -16,7 +16,7 @@ resource "azurerm_subnet" "default" {
 }
 
 module "nsg_diagnostics" {
-  source             = "../../diagnostic_setting"
+  source             = "../../components/diagnostic_setting"
   resource_type      = "nsg"
   retention          = "${var.diagnostic_retentions["nsg"]}"
   storage_account_id = "${var.diagnostics_storage_account_id}"
@@ -24,7 +24,7 @@ module "nsg_diagnostics" {
 }
 
 module "app_gateway_diagnostics" {
-  source             = "../../diagnostic_setting"
+  source             = "../../components/diagnostic_setting"
   resource_type      = "app_gateway"
   retention          = "${var.diagnostic_retentions["app_gateway"]}"
   storage_account_id = "${var.diagnostics_storage_account_id}"

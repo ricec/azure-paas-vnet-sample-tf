@@ -1,5 +1,5 @@
 module "ase" {
-  source                       = "../app_service_environment"
+  source                       = "../components/app_service_environment"
   resource_group_name          = "${azurerm_resource_group.shared_app.name}"
   ase_name                     = "${module.primary_region.config["prefix"]}-ase"
   vnet_id                      = "${module.networking.vnet_id}"
@@ -14,7 +14,7 @@ module "ase" {
 }
 
 module "secondary_ase" {
-  source                       = "../app_service_environment"
+  source                       = "../components/app_service_environment"
   resource_group_name          = "${azurerm_resource_group.shared_app.name}"
   ase_name                     = "${module.secondary_region.config["prefix"]}-ase"
   vnet_id                      = "${module.secondary_network.vnet_id}"
@@ -29,7 +29,7 @@ module "secondary_ase" {
 }
 
 module "ase_cert" {
-  source = "../key_vault_certificate"
+  source = "../components/key_vault_certificate"
   key_vault_name = "${azurerm_key_vault.main.name}"
   cert_name = "${replace(local.ase_base_hostname, ".", "-")}"
   common_name = "*.${local.ase_base_hostname}"

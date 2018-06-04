@@ -40,7 +40,7 @@ resource "azurerm_key_vault" "main" {
 }
 
 module "key_vault_diagnostics" {
-  source             = "../diagnostic_setting"
+  source             = "../components/diagnostic_setting"
   resource_type      = "key_vault"
   retention          = "${var.diagnostic_retentions["key_vault"]}"
   storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"

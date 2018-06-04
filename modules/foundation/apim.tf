@@ -5,7 +5,7 @@ locals {
 }
 
 module "apim" {
-  source                         = "../multiregion/apim"
+  source                         = "../components/multiregion/apim"
   primary_region                 = "${module.primary_region.config}"
   secondary_region               = "${module.secondary_region.config}"
   resource_group_name            = "${azurerm_resource_group.shared_app.name}"
@@ -29,7 +29,7 @@ module "apim" {
 }
 
 module "apim_cert" {
-  source         = "../key_vault_certificate"
+  source         = "../components/key_vault_certificate"
   key_vault_name = "${azurerm_key_vault.main.name}"
   cert_name      = "${replace(local.api_hostname, ".", "-")}"
   common_name    = "${local.api_hostname}"
