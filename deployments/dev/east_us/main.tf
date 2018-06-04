@@ -39,7 +39,7 @@ module "foundation" {
 }
 
 module "service_1" {
-  source              = "../../../modules/service_1"
+  source              = "../../../modules/services/service_1"
   location            = "${module.foundation.primary_location}"
   resource_prefix     = "${local.resource_prefix}-service-1"
   resource_group_name = "${local.resource_prefix}-service-1"
