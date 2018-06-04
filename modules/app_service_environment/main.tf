@@ -7,7 +7,7 @@ resource "azurerm_template_deployment" "ase" {
     aseName        = "${var.ase_name}"
     vnetId         = "${var.vnet_id}"
     subnetName     = "${var.subnet_name}"
-    dnsSuffix      = "${var.dns_suffix}"
+    dnsSuffix      = "${var.ase_subdomain}.${var.dns_zone_name}"
     location       = "${var.friendly_location_name}"
     tags           = "${jsonencode(var.tags)}"
   }
@@ -36,4 +36,20 @@ data "external" "ilb_ip" {
     "${path.module}/scripts/get_ase_ilb_ip.sh",
     "${azurerm_template_deployment.ase.outputs["aseId"]}"
   ]
+}
+
+resource "azurerm_dns_a_record" "ase_wildcard" {
+  name                = "*.${var.ase_subdomain}"
+  zone_name           = "${var.dns_zone_name}"
+  resource_group_name = "${var.dns_zone_resource_group_name}"
+  ttl                 = 300
+  records             = ["${data.external.ilb_ip.result["ilb_ip"]}"]
+}
+
+resource "azurerm_dns_a_record" "ase_scm_wildcard" {
+  name                = "*.scm.${var.ase_subdomain}"
+  zone_name           = "${var.dns_zone_name}"
+  resource_group_name = "${var.dns_zone_resource_group_name}"
+  ttl                 = 300
+  records             = ["${data.external.ilb_ip.result["ilb_ip"]}"]
 }
