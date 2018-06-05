@@ -33,9 +33,10 @@ module "foundation" {
 
   key_vault_deployer_object_id = "b60e21b7-f926-456b-a4f6-c8290eafd061"
 
-  apim_publisher_email = "chrrice@microsoft.com"
-  apim_publisher_name  = "chrrice"
-  apim_sku_count       = 1
+  apim_publisher_email    = "chrrice@microsoft.com"
+  apim_publisher_name     = "chrrice"
+  apim_primary_capacity   = 1
+  apim_secondary_capacity = 1
 }
 
 module "service_1" {

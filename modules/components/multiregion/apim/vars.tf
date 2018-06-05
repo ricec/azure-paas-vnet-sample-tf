@@ -8,13 +8,14 @@ variable "resource_group_name" {}
 variable "publisher_email" {}
 variable "publisher_name" {}
 variable "sku" {}
-variable "sku_count" {}
+variable "primary_capacity" {}
+variable "secondary_capacity" {}
 variable "api_hostname" {}
 variable "portal_hostname" {}
 variable "scm_hostname" {}
 variable "ssl_cert" {}
-variable "vnet_id" {}
-variable "subnet_name" {}
+variable "primary_subnet_id" {}
+variable "secondary_subnet_id" {}
 variable "dns_zone_name" {}
 variable "dns_zone_resource_group_name" {}
 

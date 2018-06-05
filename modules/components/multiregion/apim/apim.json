@@ -5,6 +5,12 @@
     "apimName": {
       "type": "string"
     },
+    "primaryLocation": {
+      "type": "string"
+    },
+    "secondaryLocation": {
+      "type": "string"
+    },
     "publisherEmail": {
       "type": "string"
     },
@@ -14,7 +20,10 @@
     "sku": {
       "type": "string"
     },
-    "skuCount": {
+    "primaryCapacity": {
+      "type": "string"
+    },
+    "secondaryCapacity": {
       "type": "string"
     },
     "apiHostname": {
@@ -35,10 +44,10 @@
     "sslCert": {
       "type": "securestring"
     },
-    "vnetId": {
+    "primarySubnetId": {
       "type": "string"
     },
-    "subnetName": {
+    "secondarySubnetId": {
       "type": "string"
     },
     "tags": {
@@ -46,19 +55,18 @@
     }
   },
   "variables": {
-    "apimId": "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]",
-    "subnetId": "[concat(parameters('vnetId'),'/subnets/',parameters('subnetName'))]"
+    "apimId": "[resourceId('Microsoft.ApiManagement/service', parameters('apimName'))]"
   },
   "resources": [
     {
       "name": "[parameters('apimName')]",
       "type": "Microsoft.ApiManagement/service",
       "apiVersion": "2017-03-01",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('primaryLocation')]",
       "tags": "[json(parameters('tags'))]",
       "sku": {
         "name": "[parameters('sku')]",
-        "capacity": "[int(parameters('skuCount'))]"
+        "capacity": "[int(parameters('primaryCapacity'))]"
       },
       "properties": {
         "publisherEmail": "[parameters('publisherEmail')]",
@@ -92,9 +100,21 @@
         ],
         "virtualNetworkType": "Internal",
         "virtualNetworkConfiguration": {
-          "subnetResourceId": "[variables('subnetId')]",
-          "location": "[resourceGroup().location]"
+          "subnetResourceId": "[parameters('primarySubnetId')]",
+          "location": "[parameters('primaryLocation')]"
         },
+        "additionalLocations": [
+          {
+            "location": "[parameters('secondaryLocation')]",
+            "sku": {
+              "name": "[parameters('sku')]",
+              "capacity": "[int(parameters('secondaryCapacity'))]"
+            },
+            "virtualNetworkConfiguration": {
+              "subnetResourceId": "[parameters('secondarySubnetId')]"
+            }
+          }
+        ],
         "customProperties": {
           "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Ciphers.TripleDes168": false,
           "Microsoft.WindowsAzure.ApiManagement.Gateway.Security.Protocols.Tls11": false,
@@ -108,9 +128,13 @@
       "type": "string",
       "value": "[variables('apimId')]"
     },
-    "ipAddress": {
+    "primaryIpAddress": {
       "type": "string",
       "value": "[reference(variables('apimId'), '2018-01-01').privateIPAddresses[0]]"
+    },
+    "secondaryIpAddress": {
+      "type": "string",
+      "value": "[reference(variables('apimId'), '2018-01-01').additionalLocations[0].privateIPAddresses[0]]"
     }
   }
 }

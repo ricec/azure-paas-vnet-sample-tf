@@ -28,7 +28,8 @@ variable "shared_app_tags" {
 }
 variable "apim_publisher_email" {}
 variable "apim_publisher_name" {}
-variable "apim_sku_count" {}
+variable "apim_primary_capacity" {}
+variable "apim_secondary_capacity" {}
 
 # Monitoring
 
