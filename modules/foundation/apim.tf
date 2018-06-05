@@ -26,7 +26,7 @@ module "apim" {
   diagnostic_retention           = "${var.diagnostic_retentions["apim"]}"
   diagnostics_storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
   oms_workspace_id               = "${module.monitoring.oms_workspace_id}"
-  tags                           = "${local.shared_app_tags}"
+  tags                           = "${var.shared_app_tags}"
 }
 
 module "apim_cert" {

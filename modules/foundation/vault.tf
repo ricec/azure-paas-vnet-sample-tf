@@ -3,7 +3,7 @@ resource "azurerm_key_vault" "main" {
   location            = "${module.primary.config["location"]}"
   resource_group_name = "${azurerm_resource_group.ops.name}"
   tenant_id           = "${data.azurerm_client_config.current.tenant_id}"
-  tags                = "${local.ops_tags}"
+  tags                = "${var.ops_tags}"
 
   sku {
     name = "${var.key_vault_sku}"

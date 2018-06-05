@@ -16,7 +16,7 @@ module "primary_network" {
   diagnostic_retentions          = "${var.diagnostic_retentions}"
   diagnostics_storage_account_id = "${module.monitoring.primary_diagnostics_storage_account_id}"
   oms_workspace_id               = "${module.monitoring.oms_workspace_id}"
-  tags                           = "${local.networking_tags}"
+  tags                           = "${var.networking_tags}"
 }
 
 module "secondary_network" {
@@ -37,5 +37,5 @@ module "secondary_network" {
   diagnostic_retentions          = "${var.diagnostic_retentions}"
   diagnostics_storage_account_id = "${module.monitoring.secondary_diagnostics_storage_account_id}"
   oms_workspace_id               = "${module.monitoring.oms_workspace_id}"
-  tags                           = "${local.networking_tags}"
+  tags                           = "${var.networking_tags}"
 }

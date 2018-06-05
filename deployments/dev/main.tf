@@ -10,6 +10,15 @@ locals {
     ProductName = "TheProduct",
     CostCenter = "11111"
   }
+  ops_tags = {
+    Tier = "Ops"
+  }
+  networking_tags = {
+    Tier = "Networking"
+  }
+  shared_app_tags = {
+    Tier = "App"
+  }
   service_1_tags = {
     Tier = "App"
     Component = "Service1"
@@ -19,20 +28,28 @@ locals {
 module "foundation" {
   source             = "../../modules/foundation"
 
-  # NOTE: This location must be the friendly name (e.g. South Central US) as
-  # ASEs don't play nicely with normalized location names.
+  # Regions
   primary_location   = "East US"
   secondary_location = "West US"
+
+  # Namespacing
   resource_prefix    = "${local.resource_prefix}"
   base_hostname      = "chrrice.net"
-  base_tags          = "${local.base_tags}"
 
+  # Resource Groups
   shared_app_rg_name = "${local.resource_prefix}-app-shared"
   ops_rg_name        = "${local.resource_prefix}-ops"
   networking_rg_name = "${local.resource_prefix}-networking"
 
+  # Tagging
+  ops_tags          = "${merge(local.base_tags, local.ops_tags)}"
+  networking_tags   = "${merge(local.base_tags, local.networking_tags)}"
+  shared_app_tags   = "${merge(local.base_tags, local.shared_app_tags)}"
+
+  # Key Vault
   key_vault_deployer_object_id = "b60e21b7-f926-456b-a4f6-c8290eafd061"
 
+  # APIM
   apim_publisher_email    = "chrrice@microsoft.com"
   apim_publisher_name     = "chrrice"
   apim_primary_capacity   = 1

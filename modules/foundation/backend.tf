@@ -14,7 +14,7 @@ module "primary_ase" {
   friendly_location_name       = "${module.primary.config["location"]}"
   key_vault_id                 = "${azurerm_key_vault.main.id}"
   cert_secret_name             = "${module.ase_cert.cert_name}"
-  tags                         = "${local.shared_app_tags}"
+  tags                         = "${var.shared_app_tags}"
 }
 
 module "secondary_ase" {
@@ -29,7 +29,7 @@ module "secondary_ase" {
   friendly_location_name       = "${module.secondary.config["location"]}"
   key_vault_id                 = "${azurerm_key_vault.main.id}"
   cert_secret_name             = "${module.ase_cert.cert_name}"
-  tags                         = "${local.shared_app_tags}"
+  tags                         = "${var.shared_app_tags}"
 }
 
 module "ase_cert" {
