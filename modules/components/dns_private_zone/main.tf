@@ -2,7 +2,7 @@ locals {
   zone_config = {
     zone_name           = "${var.zone_name}"
     resource_group_name = "${var.resource_group_name}"
-    vnet_ids            = "${join(" ", var.resolution_vnet_ids)}"
+    quoted_vnet_ids     = "\"${join("\" \"", var.resolution_vnet_ids)}\""
   }
 }
 
