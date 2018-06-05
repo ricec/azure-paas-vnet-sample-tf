@@ -1,15 +1,21 @@
+terraform {
+  backend "azurerm" {
+    container_name       = "dev"
+    key                  = "dev.terraform.tfstate"
+  }
+}
+
 provider "azurerm" {
   version = "1.4.0"
 }
 
+module "config" {
+  source = "../../modules/config"
+}
+
 locals {
   resource_prefix = "prefix-dev"
-
-  base_tags = {
-    OwnerTeam = "TheTeam",
-    ProductName = "TheProduct",
-    CostCenter = "11111"
-  }
+  base_tags = "${merge(module.config.base_tags, map("Environment", "Dev"))}"
   ops_tags = {
     Tier = "Ops"
   }
